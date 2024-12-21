@@ -2,7 +2,7 @@
 {
     private static void Main(string[] args)
     {
-    //TextFileGenerator();
+    TextFileGenerator();
     startAgain:;
         //    Console.WriteLine("Welcome to a Countdown Solver, enter W for Words Round, or N for Numbers Round.");
         //checkWhichRoundAgain:;
