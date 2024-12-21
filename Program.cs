@@ -1,9 +1,11 @@
-﻿internal class Program
+﻿using System.Collections.Generic;
+
+internal class Program
 {
     private static void Main(string[] args)
     {
-        //TextFileGenerator();
-        Divide(1, 3);
+    //TextFileGenerator();
+    startAgain:;
         Console.WriteLine("Welcome to a Countdown Solver, enter W for words round, or N for numbers round.");
         string gameType = Console.ReadLine();
         gameType = gameType.ToUpper();
@@ -25,6 +27,15 @@
                 Console.WriteLine("Invalid input, please enter W or N.");
                 Environment.Exit(-1);
             }
+        }
+        Console.WriteLine("Play again? (Y/N)");
+        if (Console.ReadLine().ToUpper() == "Y")
+        {
+            goto startAgain;
+        }
+        else
+        {
+            Environment.Exit(0);
         }
     }
     private static void WordRoundSolver()
@@ -399,9 +410,13 @@
         }
 
         backgroundThread.Join();
+        List<string> sortedKeys = resultDictionary.Keys
+                            .OrderByDescending(key => key.Length)  // Sort by length in reverse order
+                            .ThenBy(key => key)                    // Then sort alphabetically within the same length
+                            .ToList();
         if (wordFound)
         {
-            foreach (string word in resultDictionary.Keys)
+            foreach (string word in sortedKeys)
             {
                 Console.WriteLine($"{word}, length:{word.Length}");
             }
@@ -411,6 +426,7 @@
             Console.WriteLine("No words found.");
 
         }
+        
     }
     private static void NumberRoundSolver()
     {
@@ -432,12 +448,12 @@
         {
             Divide(4, 6);
         }
-        catch (ArithmeticException)
-        {
+    catch (ArithmeticException)
+            {
             goto tryNextPermutation;
 
         }
-    }
+        }
     private static int Divide(int a, int b)
     {
         //can't divide by 0, and result has to be a whole number
@@ -544,11 +560,7 @@
     {
         // Simulate a task running
         Console.WriteLine("Background task started...");
-        for (int i = 0; i < 10; i++) // Task progress
-        {
-            // Simulate work by sleeping for 1 second
-            Thread.Sleep(1000);
-        }
+        
         Console.WriteLine("Background task completed.");
     }
 
