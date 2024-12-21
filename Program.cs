@@ -36,15 +36,34 @@
         Console.WriteLine("**********************************************************************");
         Console.WriteLine("");
         WordRoundSolver();
-        Console.WriteLine("Play again? (Y/N)");
-        if (Console.ReadLine().ToUpper() == "Y")
+        Console.WriteLine("-------------------------------------------------------------------------------------------------------------");
+        Console.WriteLine("Would you like to use the solver again? (Y/N)");
+    invalidYN:;
+        string input = Console.ReadLine();
+        if (input.Length != 1)
+        {
+            Console.WriteLine("Please enter either Y or N.");
+            goto invalidYN;
+        }
+        if (input.ToUpper() == "Y")
         {
             Console.Clear();
             goto startAgain;
         }
         else
         {
-            Environment.Exit(0);
+            if (input.ToUpper() == "N")
+            {
+                Console.WriteLine("-------------------------------------------------------------------------------------------------------------"); 
+                Console.WriteLine("Thanks for using the solver!");
+                Console.WriteLine("-------------------------------------------------------------------------------------------------------------"); 
+                Environment.Exit(0);
+            }
+            else
+            {
+                Console.WriteLine("Please enter either Y or N.");
+                goto invalidYN;
+            }
         }
     }
     private static void WordRoundSolver()
@@ -60,7 +79,7 @@
             goto try9CharactersAgain;
         }
         
-        Console.WriteLine("What is the shortest word length you want to try? 6 is what we reccomend. (Enter a number between 1 and 9.)");
+        Console.WriteLine("What is the shortest word length you want to try? Enter a number between 1 and 9. (6 is what we reccomend).");
     tryLengthToCheckAgain:;
         if (!int.TryParse(Console.ReadLine(), out int lengthToCheck) || lengthToCheck < 1 || lengthToCheck > 9)
         {
@@ -412,7 +431,7 @@
             }
 
             List<string> sortedKeys = resultDictionary.Keys
-                                .OrderByDescending(key => key.Length)  // Sort by length in reverse order
+                                .OrderBy(key => key.Length)  // Sort by length in reverse order
                                 .ThenByDescending(key => key)                    // Then sort alphabetically within the same length
                                 .ToList();
             if (wordFound)
@@ -422,6 +441,7 @@
                 {
                     Console.WriteLine($"{word}, length:{word.Length}");
                 }
+                Console.WriteLine("-------------------------------------------------------------------------------------------------------------");
                 Console.WriteLine($"These are all the words that can be made from the letters {characters.ToUpper()} with a length greater than or equal to {lengthToCheck}.");
             }
             else
@@ -437,7 +457,7 @@
 
     private static void NumberRoundSolver()
     {
-        char[] operators = { '+', '-', '*', '/' };
+        char[] operators = { '+', '-', '-', '/' };
         Console.WriteLine("Enter 6 numbers, separated by commas;");
         string numbers = Console.ReadLine();
         Console.WriteLine("Enter the target number");
