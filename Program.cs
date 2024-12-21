@@ -4,29 +4,38 @@
     {
     //TextFileGenerator();
     startAgain:;
-        Console.WriteLine("Welcome to a Countdown Solver, enter W for Words Round, or N for Numbers Round.");
-    checkWhichRoundAgain:;
-        string gameType = Console.ReadLine();
-        gameType = gameType.ToUpper();
-        bool gameChosen = false;
-        if (gameType == "W")
-        {
-            gameChosen = true;
-            WordRoundSolver();
-        }
-        if (gameType == "N")
-        {
-            gameChosen = true;
-            NumberRoundSolver();
-        }
-        else
-        {
-            if (!gameChosen)
-            {
-                Console.WriteLine("Invalid input, please enter W for the Words Round, or N for the Numbers Round.");
-                goto checkWhichRoundAgain;
-            }
-        }
+        //    Console.WriteLine("Welcome to a Countdown Solver, enter W for Words Round, or N for Numbers Round.");
+        //checkWhichRoundAgain:;
+        //    string gameType = Console.ReadLine();
+        //    gameType = gameType.ToUpper();
+        //    bool gameChosen = false;
+        //    if (gameType == "W")
+        //    {
+        //        gameChosen = true;
+        //        WordRoundSolver();
+        //    }
+        //    if (gameType == "N")
+        //    {
+        //        gameChosen = true;
+        //        NumberRoundSolver();
+        //    }
+        //    else
+        //    {
+        //        if (!gameChosen)
+        //        {
+        //            Console.WriteLine("Invalid input, please enter W for the Words Round, or N for the Numbers Round.");
+        //            goto checkWhichRoundAgain;
+        //        }
+        //    }
+        Console.WriteLine("**********************************************************************");
+        Console.WriteLine("** Countdown Solver v1.0");
+        Console.WriteLine("** By jakeabywater");
+        Console.WriteLine("** https://github.com/jakeabywater/CountdownSolver");
+        Console.WriteLine("**********************************************************************");
+        Console.WriteLine("** Welcome to the Countdown Word Round Solver");
+        Console.WriteLine("**********************************************************************");
+        Console.WriteLine("");
+        WordRoundSolver();
         Console.WriteLine("Play again? (Y/N)");
         if (Console.ReadLine().ToUpper() == "Y")
         {
