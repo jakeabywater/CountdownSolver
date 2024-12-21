@@ -3,6 +3,7 @@
     private static void Main(string[] args)
     {
         //TextFileGenerator();
+        Divide(1, 3);
         Console.WriteLine("Welcome to a Countdown Solver, enter W for words round, or N for numbers round.");
         string gameType = Console.ReadLine();
         gameType = gameType.ToUpper();
@@ -425,9 +426,40 @@
 
         int[] numbersArray = Array.ConvertAll(numbers.Split(','), int.Parse);
         List<int> results = new List<int>();
+    //create every permutation of the numbers of every possible length and order
+    tryNextPermutation:;
+        try
+        {
+            Divide(4, 6);
+        }
+        catch (ArithmeticException)
+        {
+            goto tryNextPermutation;
 
-        
-
+        }
+    }
+    private static int Divide(int a, int b)
+    {
+        //can't divide by 0, and result has to be a whole number
+        if (b == 0)
+        {
+            throw new DivideByZeroException();
+        }
+        if(a % b != 0)
+        {
+            throw new ArithmeticException();
+            
+        }
+        return a / b;
+    }
+    private static int Subtract(int a, int b)
+    {
+        //can't produce negative numbers
+        if(b > a)
+        {
+            throw new ArithmeticException();
+        }
+        return a - b;
     }
 
 
