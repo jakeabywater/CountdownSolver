@@ -2,7 +2,7 @@
 {
     private static void Main(string[] args)
     {
-        RunSolver();
+        Solvers.NumberRoundSolver();
 
     }
     private static void RunSolver()
@@ -24,12 +24,12 @@
         if (gameType == "W")
         {
             gameChosen = true;
-            WordRoundSolver();
+            Solvers.WordRoundSolver();
         }
         if (gameType == "N")
         {
             gameChosen = true;
-            NumberRoundSolver();
+            Solvers.NumberRoundSolver();
         }
         else
         {
@@ -459,21 +459,510 @@ internal class Solvers
 
     public static void NumberRoundSolver()
     {
-        char[] operators = { '+', '-', '-', '/' };
+
         Console.WriteLine("Enter 6 numbers, separated by commas;");
         string numbers = Console.ReadLine();
         Console.WriteLine("Enter the target number");
         int targetNumber = Convert.ToInt32(Console.ReadLine());
-
-
-
         int[] numbersArray = Array.ConvertAll(numbers.Split(','), int.Parse);
-        List<int> results = new List<int>();
-        //create every permutation of the numbers of every possible length and order
+        if (numbersArray.Contains(targetNumber))
+        {
+            Console.WriteLine($"The target can be reached through the calculation {targetNumber}.");
+        }
+        //create every permutation of the numbers of every possible length and order,
+        //starting with using all numbers and descending in length
+        List<List<int>> permutations = new List<List<int>>();
+
+        permutations.AddRange(SolverHelpers.Permutations(numbersArray));
+        foreach (List<int> permutation in permutations)
+        {
+            //there are 5 possible slots to place in operators 0-5
+            //there are 7 possible slots to place brackets, however each must be a pair
+            //( can be placed in gaps 0-6
+            // ) can be placed in gaps 1-7
+            // number of ( must equal number of )
+            //a ) cannot be placed before any (
+            //a ( cannot be placed after any )
+            List<string> expressionList = new List<string>();
+            foreach (int number in permutation)
+            {
+                expressionList.Add(",");
+                expressionList.Add(number.ToString());
+
+            }
+            expressionList.Add(",");
+
+            List<List<string>> expressionLists = new List<List<string>>();
+            expressionLists.AddRange(SolverHelpers.OperatorPermutationsLength6(expressionList));
+            expressionLists.AddRange(SolverHelpers.OperatorPermutationsLength5(expressionList));
+            expressionLists.AddRange(SolverHelpers.OperatorPermutationsLength4(expressionList));
+            expressionLists.AddRange(SolverHelpers.OperatorPermutationsLength3(expressionList));
+            expressionLists.AddRange(SolverHelpers.OperatorPermutationsLength2(expressionList));
+
+
+
+        }
 
     }
 
 }
+internal class SolverHelpers
+{
+    static char[] operators = { '+', '-', '-', '/' };
+    static char[] brackets = { '(', ')' };
+    static char[] operatorsAndBrackets = { '+', '-', '*', '/', '(', ')' };
+
+    public static List<List<int>> Permutations(int[] numbers)
+    {
+        List<List<int>> permutations = new List<List<int>>();
+        //length = 6
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            for (int j = 0; j < numbers.Length; j++)
+            {
+                if (i != j)
+                {
+                    for (int k = 0; k < numbers.Length; k++)
+                    {
+                        if (k != i && k != j)
+                        {
+                            for (int l = 0; l < numbers.Length; l++)
+                            {
+                                if (l != i && l != j && l != k)
+                                {
+                                    for (int m = 0; m < numbers.Length; m++)
+                                    {
+                                        if (m != i && m != j && m != k && m != l)
+                                        {
+                                            for (int n = 0; n < numbers.Length; n++)
+                                            {
+                                                if (n != i && n != j && n != k && n != l && n != m)
+                                                {
+                                                    List<int> permutation = new List<int>();
+                                                    permutation.Add(numbers[i]);
+                                                    permutation.Add(numbers[j]);
+                                                    permutation.Add(numbers[k]);
+                                                    permutation.Add(numbers[l]);
+                                                    permutation.Add(numbers[m]);
+                                                    permutation.Add(numbers[n]);
+                                                    permutations.Add(permutation);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //length = 5
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            for (int j = 0; j < numbers.Length; j++)
+            {
+                if (i != j)
+                {
+                    for (int k = 0; k < numbers.Length; k++)
+                    {
+                        if (k != i && k != j)
+                        {
+                            for (int l = 0; l < numbers.Length; l++)
+                            {
+                                if (l != i && l != j && l != k)
+                                {
+                                    for (int m = 0; m < numbers.Length; m++)
+                                    {
+                                        if (m != i && m != j && m != k && m != l)
+                                        {
+                                            List<int> permutation = new List<int>();
+                                            permutation.Add(numbers[i]);
+                                            permutation.Add(numbers[j]);
+                                            permutation.Add(numbers[k]);
+                                            permutation.Add(numbers[l]);
+                                            permutation.Add(numbers[m]);
+                                            permutations.Add(permutation);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //length = 4
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            for (int j = 0; j < numbers.Length; j++)
+            {
+                if (i != j)
+                {
+                    for (int k = 0; k < numbers.Length; k++)
+                    {
+                        if (k != i && k != j)
+                        {
+                            for (int l = 0; l < numbers.Length; l++)
+                            {
+                                if (l != i && l != j && l != k)
+                                {
+                                    List<int> permutation = new List<int>();
+                                    permutation.Add(numbers[i]);
+                                    permutation.Add(numbers[j]);
+                                    permutation.Add(numbers[k]);
+                                    permutation.Add(numbers[l]);
+                                    permutations.Add(permutation);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //length = 3
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            for (int j = 0; j < numbers.Length; j++)
+            {
+                if (i != j)
+                {
+                    for (int k = 0; k < numbers.Length; k++)
+                    {
+                        if (k != i && k != j)
+                        {
+                            List<int> permutation = new List<int>();
+                            permutation.Add(numbers[i]);
+                            permutation.Add(numbers[j]);
+                            permutation.Add(numbers[k]);
+                            permutations.Add(permutation);
+                        }
+                    }
+                }
+            }
+        }
+        //length = 2
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            for (int j = 0; j < numbers.Length; j++)
+            {
+                if (i != j)
+                {
+                    List<int> permutation = new List<int>();
+                    permutation.Add(numbers[i]);
+                    permutation.Add(numbers[j]);
+                    permutations.Add(permutation);
+                }
+            }
+        }
+
+        //length = 1
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            List<int> permutation = new List<int>();
+            permutation.Add(numbers[i]);
+            permutations.Add(permutation);
+        }
+        return permutations;
+    }
+
+    public static List<List<string>> OperatorPermutationsLength6(List<string> expressionList)
+    {
+        List<List<string>> expressionLists = new List<List<string>>();
+        //there are 5 possible slots to place in operators 0-5
+        //there are 7 possible slots to place brackets, however each must be a pair
+        //( can be placed in gaps 0-6
+        // ) can be placed in gaps 1-7
+        // number of ( must equal number of )
+        //a ) cannot be placed before any (
+        //a ( cannot be placed after any )
+        int bracketOpen = 0;
+        for (int h = 0; h <= 1; h++)
+        {
+            if (h == 1)
+            {
+                expressionList[0] = "_";
+            }
+            else
+            {
+                expressionList[0] = "(";
+                bracketOpen++;
+            }
+
+            for (int i = 0; i < operatorsAndBrackets.Length; i++)
+            {
+                bracketOpen = IsBracket(bracketOpen, i);
+                expressionList[2] = operatorsAndBrackets[i].ToString();
+                for (int j = 0; j < operatorsAndBrackets.Length; j++)
+                {
+                    expressionList[4] = operatorsAndBrackets[j].ToString();
+                    bracketOpen = IsBracket(bracketOpen, j);
+                    for (int k = 0; k < operatorsAndBrackets.Length; k++)
+                    {
+                        expressionList[6] = operatorsAndBrackets[k].ToString();
+                        bracketOpen = IsBracket(bracketOpen, k);
+                        for (int l = 0; l <= operatorsAndBrackets.Length; l++)
+                        {
+                            expressionList[8] = operatorsAndBrackets[l].ToString();
+                            bracketOpen = IsBracket(bracketOpen, l);
+                            for (int m = 0; m <= operatorsAndBrackets.Length; m++)
+                            {
+                                expressionList[10] = operatorsAndBrackets[m].ToString();
+                                bracketOpen = IsBracket(bracketOpen, m);
+                                if (bracketOpen == 1)
+                                {
+                                    expressionList[12] = ")";
+                                    expressionLists.Add(expressionList);
+                                }
+                                if (bracketOpen == 0)
+                                {
+                                    expressionList[12] = "_";
+                                    expressionLists.Add(expressionList);
+                                }
+
+                            }
+
+                        }
+
+                    }
+                }
+            }
+        }
+        return expressionLists;
+    }
+
+    public static List<List<string>> OperatorPermutationsLength5(List<string> expressionList)
+    {
+        List<List<string>> expressionLists = new List<List<string>>();
+        //there are 5 possible slots to place in operators 0-5
+        //there are 7 possible slots to place brackets, however each must be a pair
+        //( can be placed in gaps 0-6
+        // ) can be placed in gaps 1-7
+        // number of ( must equal number of )
+        //a ) cannot be placed before any (
+        //a ( cannot be placed after any )
+        int bracketOpen = 0;
+        for (int h = 0; h <= 1; h++)
+        {
+            if (h == 1)
+            {
+                expressionList[0] = "_";
+            }
+            else
+            {
+                expressionList[0] = "(";
+                bracketOpen++;
+            }
+
+            for (int i = 0; i < operatorsAndBrackets.Length; i++)
+            {
+                bracketOpen = IsBracket(bracketOpen, i);
+                expressionList[2] = operatorsAndBrackets[i].ToString();
+                for (int j = 0; j < operatorsAndBrackets.Length; j++)
+                {
+                    expressionList[4] = operatorsAndBrackets[j].ToString();
+                    bracketOpen = IsBracket(bracketOpen, j);
+                    for (int k = 0; k < operatorsAndBrackets.Length; k++)
+                    {
+                        expressionList[6] = operatorsAndBrackets[k].ToString();
+                        bracketOpen = IsBracket(bracketOpen, k);
+                        for (int l = 0; l <= operatorsAndBrackets.Length; l++)
+                        {
+                            expressionList[8] = operatorsAndBrackets[l].ToString();
+                            bracketOpen = IsBracket(bracketOpen, l);
+                            if (bracketOpen == 1)
+                            {
+                                expressionList[10] = ")";
+                                expressionLists.Add(expressionList);
+                            }
+                            if (bracketOpen == 0)
+                            {
+                                expressionList[10] = "_";
+                                expressionLists.Add(expressionList);
+                            }
+
+                        }
+
+                    }
+
+                }
+            }
+        }
+
+
+        return expressionLists;
+    }
+
+    public static List<List<string>> OperatorPermutationsLength4(List<string> expressionList)
+    {
+        List<List<string>> expressionLists = new List<List<string>>();
+        //there are 5 possible slots to place in operators 0-5
+        //there are 7 possible slots to place brackets, however each must be a pair
+        //( can be placed in gaps 0-6
+        // ) can be placed in gaps 1-7
+        // number of ( must equal number of )
+        //a ) cannot be placed before any (
+        //a ( cannot be placed after any )
+        int bracketOpen = 0;
+        for (int h = 0; h <= 1; h++)
+        {
+            if (h == 1)
+            {
+                expressionList[0] = "_";
+            }
+            else
+            {
+                expressionList[0] = "(";
+                bracketOpen++;
+            }
+
+            for (int i = 0; i < operatorsAndBrackets.Length; i++)
+            {
+                bracketOpen = IsBracket(bracketOpen, i);
+                expressionList[2] = operatorsAndBrackets[i].ToString();
+                for (int j = 0; j < operatorsAndBrackets.Length; j++)
+                {
+                    expressionList[4] = operatorsAndBrackets[j].ToString();
+                    bracketOpen = IsBracket(bracketOpen, j);
+                    for (int k = 0; k < operatorsAndBrackets.Length; k++)
+                    {
+                        expressionList[6] = operatorsAndBrackets[k].ToString();
+                        bracketOpen = IsBracket(bracketOpen, k);
+                        if (bracketOpen == 1)
+                        {
+                            expressionList[10] = ")";
+                            expressionLists.Add(expressionList);
+                        }
+                        if (bracketOpen == 0)
+                        {
+                            expressionList[10] = "_";
+                            expressionLists.Add(expressionList);
+                        }
+
+                    }
+
+                }
+
+            }
+        }
+        return expressionLists;
+    }
+
+
+
+
+
+    public static List<List<string>> OperatorPermutationsLength3(List<string> expressionList)
+    {
+        List<List<string>> expressionLists = new List<List<string>>();
+        //there are 5 possible slots to place in operators 0-5
+        //there are 7 possible slots to place brackets, however each must be a pair
+        //( can be placed in gaps 0-6
+        // ) can be placed in gaps 1-7
+        // number of ( must equal number of )
+        //a ) cannot be placed before any (
+        //a ( cannot be placed after any )
+        int bracketOpen = 0;
+        for (int h = 0; h <= 1; h++)
+        {
+            if (h == 1)
+            {
+                expressionList[0] = "_";
+            }
+            else
+            {
+                expressionList[0] = "(";
+                bracketOpen++;
+            }
+
+            for (int i = 0; i < operatorsAndBrackets.Length; i++)
+            {
+                bracketOpen = IsBracket(bracketOpen, i);
+                expressionList[2] = operatorsAndBrackets[i].ToString();
+                for (int j = 0; j < operatorsAndBrackets.Length; j++)
+                {
+                    expressionList[4] = operatorsAndBrackets[j].ToString();
+                    bracketOpen = IsBracket(bracketOpen, j);
+                    if (bracketOpen == 1)
+                    {
+                        expressionList[10] = ")";
+                        expressionLists.Add(expressionList);
+                    }
+                    if (bracketOpen == 0)
+                    {
+                        expressionList[10] = "_";
+                        expressionLists.Add(expressionList);
+                    }
+
+                }
+
+            }
+
+        }
+
+        return expressionLists;
+    }
+
+    public static List<List<string>> OperatorPermutationsLength2(List<string> expressionList)
+    {
+        List<List<string>> expressionLists = new List<List<string>>();
+        //there are 5 possible slots to place in operators 0-5
+        //there are 7 possible slots to place brackets, however each must be a pair
+        //( can be placed in gaps 0-6
+        // ) can be placed in gaps 1-7
+        // number of ( must equal number of )
+        //a ) cannot be placed before any (
+        //a ( cannot be placed after any )
+        int bracketOpen = 0;
+        for (int h = 0; h <= 1; h++)
+        {
+            if (h == 1)
+            {
+                expressionList[0] = "_";
+            }
+            else
+            {
+                expressionList[0] = "(";
+                bracketOpen++;
+            }
+
+            for (int i = 0; i < operatorsAndBrackets.Length; i++)
+            {
+                bracketOpen = IsBracket(bracketOpen, i);
+                expressionList[2] = operatorsAndBrackets[i].ToString();
+                if (bracketOpen == 1)
+                {
+                    expressionList[10] = ")";
+                    expressionLists.Add(expressionList);
+                }
+                if (bracketOpen == 0)
+                {
+                    expressionList[10] = "_";
+                    expressionLists.Add(expressionList);
+                }
+
+
+
+            }
+
+        }
+
+        return expressionLists;
+    }
+    public static int IsBracket(int bracketOpen, int counter)
+    {
+        if (operatorsAndBrackets[counter] == ')')
+        {
+            return bracketOpen - 1;
+        }
+        if (operatorsAndBrackets[counter] == '(')
+        {
+            return bracketOpen + 1;
+        }
+        return bracketOpen;
+    }
+}
+
 internal class Operators
 {
     public static int Add(int a, int b)
@@ -507,7 +996,7 @@ internal class Operators
         return a / b;
     }
 
-    
+
 
 }
 
