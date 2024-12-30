@@ -1,7 +1,14 @@
-﻿internal class Program
+﻿using NCalc;
+internal class Program
 {
+    //instead, pregenerate all the permutations and store as a list
+    //eg abcdef abcdfe etc etc
+    //store every possible way of inserting operators and brackets
+    //store in form (/+-*/+) etc
+    //parse variables into expression
     private static void Main(string[] args)
     {
+        Console.SetError(TextWriter.Null);
         Solvers.NumberRoundSolver();
 
     }
@@ -474,7 +481,7 @@ internal class Solvers
         List<List<int>> permutations = new List<List<int>>();
 
         permutations.AddRange(SolverHelpers.Permutations(numbersArray));
-        List<List<string>> expressionLists = new List<List<string>>();
+        HashSet<List<string>> expressionLists = new HashSet<List<string>>();
         foreach (List<int> permutation in permutations)
         {
             //there are 5 possible slots to place in operators 0-5
@@ -493,38 +500,67 @@ internal class Solvers
             }
             expressionList.Add(",");
 
-            switch(permutation.Count)
+            switch (permutation.Count)
             {
                 case 6:
-                    expressionLists.AddRange(SolverHelpers.OperatorPermutationsLength6(expressionList));
+                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength6(expressionList));
                     break;
                 case 5:
-                    expressionLists.AddRange(SolverHelpers.OperatorPermutationsLength5(expressionList));
+                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength5(expressionList));
                     break;
                 case 4:
-                    expressionLists.AddRange(SolverHelpers.OperatorPermutationsLength4(expressionList));
+                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength4(expressionList));
                     break;
                 case 3:
-                    expressionLists.AddRange(SolverHelpers.OperatorPermutationsLength3(expressionList));
+                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength3(expressionList));
                     break;
                 case 2:
-                    expressionLists.AddRange(SolverHelpers.OperatorPermutationsLength2(expressionList));
+                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength2(expressionList));
                     break;
                 default:
                     Console.WriteLine("Something wrong???");
                     break;
             }
-            
+
 
 
 
         }
         List<string> targetExpressions = new List<string>();
-        foreach (List<string> expressionList in expressionLists)
+        Dictionary<string, int> results = new Dictionary<string, int>();
+        List<string> expressionStrings = new List<string>();
+        foreach (List<string> expressionStringList in expressionLists)
         {
-            string expressionString = string.Join("", expressionList);
-            
+            string expressionString = string.Join("", expressionStringList);
+            expressionStrings.Add(expressionString);
+            //now do math on the expressionString
+            try
+            {
+                int result = SolverHelpers.EvaluateExpression(expressionString);
+
+                if (result == targetNumber)
+                {
+                    goto foundTarget;
+                    results.Add(expressionString, result);
+                }
+                Console.WriteLine(result);
+                results.Add(expressionString, result);
+
+            }
+            catch
+            {
+                //Console.WriteLine("Error");
+            }
         }
+        Dictionary<string, int> closestExpressions = results
+            .OrderBy(entry => Math.Abs(entry.Value - targetNumber))  // Sort by distance from targetNumber
+            .ToDictionary(entry => entry.Key, entry => entry.Value);
+        for (int i = 0; i < 10; i++)
+        {
+            Console.WriteLine(closestExpressions.ElementAt(i));
+        }
+    foundTarget:;
+        Console.WriteLine(results.Last());
     }
 
 }
@@ -684,16 +720,9 @@ internal class SolverHelpers
     public static List<List<string>> OperatorPermutationsLength6(List<string> expressionList)
     {
         List<List<string>> expressionLists = new List<List<string>>();
-        //there are 5 possible slots to place in operators 0-5
-        //there are 7 possible slots to place brackets, however each must be a pair
-        //( can be placed in gaps 0-6
-        // ) can be placed in gaps 1-7
-        // number of ( must equal number of )
-        //a ) cannot be placed before any (
-        //a ( cannot be placed after any )
-        int bracketOpen = 0;
         for (int h = 0; h <= 1; h++)
         {
+            int bracketOpen = 0;
             if (h == 1)
             {
                 expressionList[0] = "_";
@@ -724,26 +753,25 @@ internal class SolverHelpers
                             {
                                 expressionList[10] = operatorsAndBrackets[m].ToString();
                                 bracketOpen = IsBracket(bracketOpen, m);
-                                if (bracketOpen == 1)
+                                if (bracketOpen > 0)
                                 {
                                     expressionList[12] = ")";
-                                    expressionLists.Add(expressionList);
+                                    expressionLists.Add(new List<string>(expressionList));
                                 }
                                 else
                                 {
-                                    if (bracketOpen == 0)
-                                    {
-                                        expressionList[12] = "_";
-                                        expressionLists.Add(expressionList);
-                                    }
+                                    expressionList[12] = "_";
+                                    expressionLists.Add(new List<string>(expressionList));
                                 }
-
+                                bracketOpen = IsBracketUndo(bracketOpen, m);
                             }
-
+                            bracketOpen = IsBracketUndo(bracketOpen, l);
                         }
-
+                        bracketOpen = IsBracketUndo(bracketOpen, k);
                     }
+                    bracketOpen = IsBracketUndo(bracketOpen, j);
                 }
+                bracketOpen = IsBracketUndo(bracketOpen, i);
             }
         }
         return expressionLists;
@@ -752,13 +780,6 @@ internal class SolverHelpers
     public static List<List<string>> OperatorPermutationsLength5(List<string> expressionList)
     {
         List<List<string>> expressionLists = new List<List<string>>();
-        //there are 5 possible slots to place in operators 0-5
-        //there are 7 possible slots to place brackets, however each must be a pair
-        //( can be placed in gaps 0-6
-        // ) can be placed in gaps 1-7
-        // number of ( must equal number of )
-        //a ) cannot be placed before any (
-        //a ( cannot be placed after any )
         int bracketOpen = 0;
         for (int h = 0; h <= 1; h++)
         {
@@ -788,42 +809,31 @@ internal class SolverHelpers
                         {
                             expressionList[8] = operatorsAndBrackets[l].ToString();
                             bracketOpen = IsBracket(bracketOpen, l);
-                            if (bracketOpen == 1)
+                            if (bracketOpen > 0)
                             {
                                 expressionList[10] = ")";
-                                expressionLists.Add(expressionList);
+                                expressionLists.Add(new List<string>(expressionList));
                             }
                             else
                             {
-                                if (bracketOpen == 0)
-                                {
-                                    expressionList[10] = "_";
-                                    expressionLists.Add(expressionList);
-                                }
+                                expressionList[10] = "_";
+                                expressionLists.Add(new List<string>(expressionList));
                             }
-
+                            bracketOpen = IsBracketUndo(bracketOpen, l);
                         }
-
+                        bracketOpen = IsBracketUndo(bracketOpen, k);
                     }
-
+                    bracketOpen = IsBracketUndo(bracketOpen, j);
                 }
+                bracketOpen = IsBracketUndo(bracketOpen, i);
             }
         }
-
-
         return expressionLists;
     }
 
     public static List<List<string>> OperatorPermutationsLength4(List<string> expressionList)
     {
         List<List<string>> expressionLists = new List<List<string>>();
-        //there are 5 possible slots to place in operators 0-5
-        //there are 7 possible slots to place brackets, however each must be a pair
-        //( can be placed in gaps 0-6
-        // ) can be placed in gaps 1-7
-        // number of ( must equal number of )
-        //a ) cannot be placed before any (
-        //a ( cannot be placed after any )
         int bracketOpen = 0;
         for (int h = 0; h <= 1; h++)
         {
@@ -849,24 +859,21 @@ internal class SolverHelpers
                     {
                         expressionList[6] = operatorsAndBrackets[k].ToString();
                         bracketOpen = IsBracket(bracketOpen, k);
-                        if (bracketOpen == 1)
+                        if (bracketOpen > 0)
                         {
                             expressionList[8] = ")";
-                            expressionLists.Add(expressionList);
+                            expressionLists.Add(new List<string>(expressionList));
                         }
                         else
                         {
-                            if (bracketOpen == 0)
-                            {
-                                expressionList[8] = "_";
-                                expressionLists.Add(expressionList);
-                            }
+                            expressionList[8] = "_";
+                            expressionLists.Add(new List<string>(expressionList));
                         }
-
+                        bracketOpen = IsBracketUndo(bracketOpen, k);
                     }
-
+                    bracketOpen = IsBracketUndo(bracketOpen, j);
                 }
-
+                bracketOpen = IsBracketUndo(bracketOpen, i);
             }
         }
         return expressionLists;
@@ -875,13 +882,6 @@ internal class SolverHelpers
     public static List<List<string>> OperatorPermutationsLength3(List<string> expressionList)
     {
         List<List<string>> expressionLists = new List<List<string>>();
-        //there are 5 possible slots to place in operators 0-5
-        //there are 7 possible slots to place brackets, however each must be a pair
-        //( can be placed in gaps 0-6
-        // ) can be placed in gaps 1-7
-        // number of ( must equal number of )
-        //a ) cannot be placed before any (
-        //a ( cannot be placed after any )
         int bracketOpen = 0;
         for (int h = 0; h <= 1; h++)
         {
@@ -903,39 +903,27 @@ internal class SolverHelpers
                 {
                     expressionList[4] = operatorsAndBrackets[j].ToString();
                     bracketOpen = IsBracket(bracketOpen, j);
-                    if (bracketOpen == 1)
+                    if (bracketOpen > 0)
                     {
                         expressionList[6] = ")";
-                        expressionLists.Add(expressionList);
+                        expressionLists.Add(new List<string>(expressionList));
                     }
                     else
                     {
-                        if (bracketOpen == 0)
-                        {
-                            expressionList[6] = "_";
-                            expressionLists.Add(expressionList);
-                        }
+                        expressionList[6] = "_";
+                        expressionLists.Add(new List<string>(expressionList));
                     }
-
+                    bracketOpen = IsBracketUndo(bracketOpen, j);
                 }
-
+                bracketOpen = IsBracketUndo(bracketOpen, i);
             }
-
         }
-
         return expressionLists;
     }
 
     public static List<List<string>> OperatorPermutationsLength2(List<string> expressionList)
     {
         List<List<string>> expressionLists = new List<List<string>>();
-        //there are 5 possible slots to place in operators 0-5
-        //there are 7 possible slots to place brackets, however each must be a pair
-        //( can be placed in gaps 0-6
-        // ) can be placed in gaps 1-7
-        // number of ( must equal number of )
-        //a ) cannot be placed before any (
-        //a ( cannot be placed after any )
         int bracketOpen = 0;
         for (int h = 0; h <= 1; h++)
         {
@@ -952,28 +940,22 @@ internal class SolverHelpers
             for (int i = 0; i < operatorsAndBrackets.Length; i++)
             {
                 bracketOpen = IsBracket(bracketOpen, i);
-                expressionList[2] = operatorsAndBrackets[i].ToString();
-                if (bracketOpen == 1)
+                if (bracketOpen > 0)
                 {
                     expressionList[4] = ")";
-                    expressionLists.Add(expressionList);
+                    expressionLists.Add(new List<string>(expressionList));
                 }
                 else
                 {
-                    if (bracketOpen == 0)
-                    {
-                        expressionList[4] = "_";
-                        expressionLists.Add(expressionList);
-                    }
+                    expressionList[4] = "_";
+                    expressionLists.Add(new List<string>(expressionList));
                 }
-
-
+                bracketOpen = IsBracketUndo(bracketOpen, i);
             }
-
         }
-
         return expressionLists;
     }
+
     public static int IsBracket(int bracketOpen, int counter)
     {
         if (operatorsAndBrackets[counter] == ')')
@@ -986,7 +968,70 @@ internal class SolverHelpers
         }
         return bracketOpen;
     }
-    
+    public static int IsBracketUndo(int bracketOpen, int counter)
+    {
+        if (operatorsAndBrackets[counter] == ')')
+        {
+            return bracketOpen + 1;
+        }
+        if (operatorsAndBrackets[counter] == '(')
+        {
+            return bracketOpen - 1;
+        }
+        return bracketOpen;
+    }
+
+    public static int EvaluateExpression(string expressionInput)
+    {
+        try
+        {
+            // Create a new Expression object from the input string
+            var expression = new Expression(expressionInput);
+
+            // Add custom functions for division and subtraction
+            expression.EvaluateFunction += (name, args) =>
+            {
+                if (name.Equals("/") && args.Parameters.Count() == 2)
+                {
+                    try
+                    {
+                        // Convert to int and call custom method
+                        args.Result = Operators.Divide(Convert.ToInt32(args.Parameters[0].Evaluate()), Convert.ToInt32(args.Parameters[1].Evaluate()));
+                    }
+                    catch
+                    {
+                       throw new Exception("Invalid expression");
+                    }
+                }
+                else if (name.Equals("-") && args.Parameters.Count() == 2)
+                {
+                    try
+                    {
+                        // Convert to int and call custom method
+                        args.Result = Operators.Subtract(Convert.ToInt32(args.Parameters[0].Evaluate()), Convert.ToInt32(args.Parameters[1].Evaluate()));
+                    }
+                    catch
+                    {
+                        throw new Exception("Invalid expression");
+                    }
+                }
+
+            };
+
+            // Evaluate the expression
+            var result = expression.Evaluate();  // Evaluate the expression
+
+            // Convert the result to int (assuming result is an integer)
+            return Convert.ToInt32(result);
+        }
+        catch (Exception ex)
+        {
+            
+            //Console.WriteLine("Invalid expression: " + ex.Message);
+            throw new Exception("Invalid expression");
+        }
+    }
+
 }
 
 internal class Operators
@@ -1000,7 +1045,7 @@ internal class Operators
         //can't produce negative numbers
         if (b > a)
         {
-            throw new ArithmeticException();
+            return 999999;
         }
         return a - b;
     }
@@ -1013,11 +1058,11 @@ internal class Operators
         //can't divide by 0, and result has to be a whole number
         if (b == 0)
         {
-            throw new DivideByZeroException();
+            return 999999;
         }
         if (a % b != 0)
         {
-            throw new ArithmeticException();
+            return 999999;
         }
         return a / b;
     }
