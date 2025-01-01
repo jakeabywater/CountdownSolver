@@ -8,8 +8,8 @@ internal class Program
     //parse variables into expression
     private static void Main(string[] args)
     {
-        Console.SetError(TextWriter.Null);
-        Solvers.NumberRoundSolver();
+        Maintainance.TextFileGenerator();
+        RunSolver();
 
     }
     private static void RunSolver()
@@ -120,23 +120,32 @@ internal class Solvers
         string destinationTextFilePath1 = Path.Combine(currentDirectory, "1LetterWords.txt");
 
         Dictionary<string, string> dictionaryOf9LetterWords = File.ReadAllLines(destinationTextFilePath9)
-            .ToDictionary(word => word, word => new string(word.OrderBy(c => c).ToArray()));
+        .Select(line => line.Split(' ', 2))
+        .ToDictionary(parts => parts[0], parts => parts[1]);
         Dictionary<string, string> dictionaryOf8LetterWords = File.ReadAllLines(destinationTextFilePath8)
-            .ToDictionary(word => word, word => new string(word.OrderBy(c => c).ToArray()));
+            .Select(line => line.Split(' ', 2)) 
+            .ToDictionary(parts => parts[0], parts => parts[1]);
         Dictionary<string, string> dictionaryOf7LetterWords = File.ReadAllLines(destinationTextFilePath7)
-            .ToDictionary(word => word, word => new string(word.OrderBy(c => c).ToArray()));
+            .Select(line => line.Split(' ', 2))
+            .ToDictionary(parts => parts[0], parts => parts[1]);
         Dictionary<string, string> dictionaryOf6LetterWords = File.ReadAllLines(destinationTextFilePath6)
-            .ToDictionary(word => word, word => new string(word.OrderBy(c => c).ToArray()));
+            .Select(line => line.Split(' ', 2))
+            .ToDictionary(parts => parts[0], parts => parts[1]);
         Dictionary<string, string> dictionaryOf5LetterWords = File.ReadAllLines(destinationTextFilePath5)
-            .ToDictionary(word => word, word => new string(word.OrderBy(c => c).ToArray()));
+            .Select(line => line.Split(' ', 2))
+            .ToDictionary(parts => parts[0], parts => parts[1]);
         Dictionary<string, string> dictionaryOf4LetterWords = File.ReadAllLines(destinationTextFilePath4)
-            .ToDictionary(word => word, word => new string(word.OrderBy(c => c).ToArray()));
+            .Select(line => line.Split(' ', 2))
+            .ToDictionary(parts => parts[0], parts => parts[1]);
         Dictionary<string, string> dictionaryOf3LetterWords = File.ReadAllLines(destinationTextFilePath3)
-            .ToDictionary(word => word, word => new string(word.OrderBy(c => c).ToArray()));
+            .Select(line => line.Split(' ', 2))
+            .ToDictionary(parts => parts[0], parts => parts[1]);
         Dictionary<string, string> dictionaryOf2LetterWords = File.ReadAllLines(destinationTextFilePath2)
-            .ToDictionary(word => word, word => new string(word.OrderBy(c => c).ToArray()));
+            .Select(line => line.Split(' ', 2))
+            .ToDictionary(parts => parts[0], parts => parts[1]);
         Dictionary<string, string> dictionaryOf1LetterWords = File.ReadAllLines(destinationTextFilePath1)
-            .ToDictionary(word => word, word => new string(word.OrderBy(c => c).ToArray()));
+            .Select(line => line.Split(' ', 2))
+            .ToDictionary(parts => parts[0], parts => parts[1]);
 
         //now do each permutation of missing characters
 
@@ -466,7 +475,7 @@ internal class Solvers
 
     public static void NumberRoundSolver()
     {
-
+        //add input validation
         Console.WriteLine("Enter 6 numbers, separated by commas;");
         string numbers = Console.ReadLine();
         Console.WriteLine("Enter the target number");
@@ -561,6 +570,13 @@ internal class Solvers
         }
     foundTarget:;
         Console.WriteLine(results.Last());
+    }
+
+    public static void NewNumberRoundSolver()
+    {
+        //use a text file to source permutations of numbers and operators, then substitute in numbers
+
+        //first take inputs using extra validation.
     }
 
 }
@@ -1000,7 +1016,7 @@ internal class SolverHelpers
                     }
                     catch
                     {
-                       throw new Exception("Invalid expression");
+                        throw new Exception("Invalid expression");
                     }
                 }
                 else if (name.Equals("-") && args.Parameters.Count() == 2)
@@ -1026,7 +1042,7 @@ internal class SolverHelpers
         }
         catch (Exception ex)
         {
-            
+
             //Console.WriteLine("Invalid expression: " + ex.Message);
             throw new Exception("Invalid expression");
         }
@@ -1080,8 +1096,8 @@ internal class Maintainance
         // Get the path to the current directory (where the executable is located)
         string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-        // Path to the words_alpha.txt file (relative to the current directory)
-        string sourceTextFilePath = Path.Combine(currentDirectory, "words_alpha.txt");
+        // Path to the English Open Word List.txt file (relative to the current directory)
+        string sourceTextFilePath = Path.Combine(currentDirectory, "EnglishOpenWordList.txt");
 
 
 
@@ -1113,34 +1129,35 @@ internal class Maintainance
 
         foreach (string word in listOf9LetterWordsOrLess)
         {
+            string sortedWord = new string(word.OrderBy(c => c).ToArray());
             switch (word.Length)
             {
                 case 9:
-                    listOf9LetterWords.Add(word);
+                    listOf9LetterWords.Add($"{word} {sortedWord}");
                     break;
                 case 8:
-                    listOf8LetterWords.Add(word);
+                    listOf8LetterWords.Add($"{word} {sortedWord}");
                     break;
                 case 7:
-                    listOf7LetterWords.Add(word);
+                    listOf7LetterWords.Add($"{word} {sortedWord}");
                     break;
                 case 6:
-                    listOf6LetterWords.Add(word);
+                    listOf6LetterWords.Add($"{word} {sortedWord}");
                     break;
                 case 5:
-                    listOf5LetterWords.Add(word);
+                    listOf5LetterWords.Add($"{word} {sortedWord}");
                     break;
                 case 4:
-                    listOf4LetterWords.Add(word);
+                    listOf4LetterWords.Add($"{word} {sortedWord}");
                     break;
                 case 3:
-                    listOf3LetterWords.Add(word);
+                    listOf3LetterWords.Add($"{word} {sortedWord}");
                     break;
                 case 2:
-                    listOf2LetterWords.Add(word);
+                    listOf2LetterWords.Add($"{word} {sortedWord}");
                     break;
                 case 1:
-                    listOf1LetterWords.Add(word);
+                    listOf1LetterWords.Add($"{word} {sortedWord}");
                     break;
                 default:
                     Console.WriteLine("Strange???");
@@ -1149,9 +1166,7 @@ internal class Maintainance
 
 
         }
-
-
-
+       
         File.WriteAllLines(destinationTextFilePath9, listOf9LetterWords);
         File.WriteAllLines(destinationTextFilePath8, listOf8LetterWords);
         File.WriteAllLines(destinationTextFilePath7, listOf7LetterWords);
