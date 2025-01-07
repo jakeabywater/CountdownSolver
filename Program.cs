@@ -1,80 +1,82 @@
 ﻿using NCalc;
 internal class Program
 {
-    //instead, pregenerate all the permutations and store as a list
-    //eg abcdef abcdfe etc etc
-    //store every possible way of inserting operators and brackets
-    //store in form (/+-*/+) etc
-    //parse variables into expression
     private static void Main(string[] args)
     {
+        List<string> testList = new List<string> { ",", "a", ",", "b", ",", "c", ",", "d", ",", "e", ",", "f", "," };
+        SolverHelpers.OperatorPermutationsLength6Rewrite(testList);
+        Maintainance.NumberPermutationFileGenerator();
         Maintainance.TextFileGenerator();
         RunSolver();
 
     }
+
     private static void RunSolver()
     {
-    startAgain:;
-        Console.WriteLine("**********************************************************************");
-        Console.WriteLine("** Countdown Solver v1.0");
-        Console.WriteLine("** By jakeabywater");
-        Console.WriteLine("** https://github.com/jakeabywater/CountdownSolver");
-        Console.WriteLine("**********************************************************************");
-        Console.WriteLine("** Welcome to the Countdown Word Round Solver");
-        Console.WriteLine("**********************************************************************");
-        Console.WriteLine("");
-        Console.WriteLine("Enter W to solve the words round, or N to solve the numbers round.");
-    checkWhichRoundAgain:;
-        string gameType = Console.ReadLine();
-        gameType = gameType.ToUpper();
-        bool gameChosen = false;
-        if (gameType == "W")
+        bool runAgain = true;
+        while (runAgain)
         {
-            gameChosen = true;
-            Solvers.WordRoundSolver();
-        }
-        if (gameType == "N")
-        {
-            gameChosen = true;
-            Solvers.NumberRoundSolver();
-        }
-        else
-        {
-            if (!gameChosen)
-            {
-                Console.WriteLine("Invalid input, please enter W for the Words Round, or N for the Numbers Round.");
-                goto checkWhichRoundAgain;
-            }
-        }
+            Console.WriteLine("**********************************************************************");
+            Console.WriteLine("** Countdown Solver v1.0");
+            Console.WriteLine("** By jakeabywater");
+            Console.WriteLine("** https://github.com/jakeabywater/CountdownSolver");
+            Console.WriteLine("**********************************************************************");
+            Console.WriteLine("** Welcome to the Countdown Word Round Solver");
+            Console.WriteLine("**********************************************************************");
+            Console.WriteLine("");
+            Console.WriteLine("Enter W to solve the words round, or N to solve the numbers round.");
 
-
-        Console.WriteLine("-------------------------------------------------------------------------------------------------------------");
-        Console.WriteLine("Would you like to use the solver again? (Y/N)");
-    invalidYN:;
-        string input = Console.ReadLine();
-        if (input.Length != 1)
-        {
-            Console.WriteLine("Please enter either Y or N.");
-            goto invalidYN;
-        }
-        if (input.ToUpper() == "Y")
-        {
-            Console.Clear();
-            goto startAgain;
-        }
-        else
-        {
-            if (input.ToUpper() == "N")
+            bool gameChosen = false;
+            while (!gameChosen)
             {
-                Console.WriteLine("-------------------------------------------------------------------------------------------------------------");
-                Console.WriteLine("Thanks for using the solver!");
-                Console.WriteLine("-------------------------------------------------------------------------------------------------------------");
-                Environment.Exit(0);
+                string gameType = Console.ReadLine().ToUpper();
+                if (gameType == "W")
+                {
+                    gameChosen = true;
+                    Solvers.WordRoundSolver();
+                }
+                else if (gameType == "N")
+                {
+                    gameChosen = true;
+                    Solvers.NumberRoundSolver();
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input, please enter W for the Words Round, or N for the Numbers Round.");
+                }
             }
-            else
+
+            Console.WriteLine("-------------------------------------------------------------------------------------------------------------");
+            Console.WriteLine("Would you like to use the solver again? (Y/N)");
+
+            bool validInput = false;
+            while (!validInput)
             {
-                Console.WriteLine("Please enter either Y or N.");
-                goto invalidYN;
+                string input = Console.ReadLine();
+                if (input.Length == 1)
+                {
+                    if (input.ToUpper() == "Y")
+                    {
+                        validInput = true;
+                        Console.Clear();
+                    }
+                    else if (input.ToUpper() == "N")
+                    {
+                        validInput = true;
+                        runAgain = false;
+                        Console.WriteLine("-------------------------------------------------------------------------------------------------------------");
+                        Console.WriteLine("Thanks for using the solver!");
+                        Console.WriteLine("-------------------------------------------------------------------------------------------------------------");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Please enter either Y or N.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Please enter either Y or N.");
+                }
             }
         }
     }
@@ -123,7 +125,7 @@ internal class Solvers
         .Select(line => line.Split(' ', 2))
         .ToDictionary(parts => parts[0], parts => parts[1]);
         Dictionary<string, string> dictionaryOf8LetterWords = File.ReadAllLines(destinationTextFilePath8)
-            .Select(line => line.Split(' ', 2)) 
+            .Select(line => line.Split(' ', 2))
             .ToDictionary(parts => parts[0], parts => parts[1]);
         Dictionary<string, string> dictionaryOf7LetterWords = File.ReadAllLines(destinationTextFilePath7)
             .Select(line => line.Split(' ', 2))
@@ -733,8 +735,14 @@ internal class SolverHelpers
         return permutations;
     }
 
-    public static List<List<string>> OperatorPermutationsLength6(List<string> expressionList)
+    public static List<List<string>> OperatorPermutationsLength6Rewrite(List<string> expressionList)
     {
+
+        //cannot have closed bracket if one is not open
+        //closed brackets must have operators before and after
+        //Logic rewrite required
+        // +(, -(, *(, /(, )+ )- )* )/
+        //These are only valid in certain positions
         List<List<string>> expressionLists = new List<List<string>>();
         for (int h = 0; h <= 1; h++)
         {
@@ -752,6 +760,7 @@ internal class SolverHelpers
             for (int i = 0; i < operatorsAndBrackets.Length; i++)
             {
                 bracketOpen = IsBracket(bracketOpen, i);
+
                 expressionList[2] = operatorsAndBrackets[i].ToString();
                 for (int j = 0; j < operatorsAndBrackets.Length; j++)
                 {
@@ -769,15 +778,95 @@ internal class SolverHelpers
                             {
                                 expressionList[10] = operatorsAndBrackets[m].ToString();
                                 bracketOpen = IsBracket(bracketOpen, m);
-                                if (bracketOpen > 0)
-                                {
-                                    expressionList[12] = ")";
-                                    expressionLists.Add(new List<string>(expressionList));
-                                }
-                                else
+                                if (bracketOpen == 0)
                                 {
                                     expressionList[12] = "_";
                                     expressionLists.Add(new List<string>(expressionList));
+                                    string expressionListString = String.Join(" ", expressionList);
+                                    Console.WriteLine(expressionListString);
+                                }
+                                else
+                                {
+                                    if (bracketOpen == 1)
+                                    {
+                                        expressionList[12] = ")";
+                                        expressionLists.Add(new List<string>(expressionList));
+                                        string expressionListString = String.Join(" ", expressionList);
+                                        Console.WriteLine(expressionListString);
+                                    }
+                                }
+                                bracketOpen = IsBracketUndo(bracketOpen, m);
+                            }
+                            bracketOpen = IsBracketUndo(bracketOpen, l);
+                        }
+                        bracketOpen = IsBracketUndo(bracketOpen, k);
+                    }
+                    bracketOpen = IsBracketUndo(bracketOpen, j);
+                }
+                bracketOpen = IsBracketUndo(bracketOpen, i);
+            }
+        }
+        return expressionLists;
+
+    }
+    public static List<List<string>> OperatorPermutationsLength6(List<string> expressionList)
+    {
+        //cannot have closed bracket if one is not open
+        //closed brackets must have operators before and after
+        //Logic rewrite required
+        // +(, -(, *(, /(, )+ )- )* )/
+        //These are only valid in certain positions
+        List<List<string>> expressionLists = new List<List<string>>();
+        for (int h = 0; h <= 1; h++)
+        {
+            int bracketOpen = 0;
+            if (h == 1)
+            {
+                expressionList[0] = "_";
+            }
+            else
+            {
+                expressionList[0] = "(";
+                bracketOpen++;
+            }
+
+            for (int i = 0; i < operatorsAndBrackets.Length; i++)
+            {
+                bracketOpen = IsBracket(bracketOpen, i);
+
+                expressionList[2] = operatorsAndBrackets[i].ToString();
+                for (int j = 0; j < operatorsAndBrackets.Length; j++)
+                {
+                    expressionList[4] = operatorsAndBrackets[j].ToString();
+                    bracketOpen = IsBracket(bracketOpen, j);
+                    for (int k = 0; k < operatorsAndBrackets.Length; k++)
+                    {
+                        expressionList[6] = operatorsAndBrackets[k].ToString();
+                        bracketOpen = IsBracket(bracketOpen, k);
+                        for (int l = 0; l < operatorsAndBrackets.Length; l++)
+                        {
+                            expressionList[8] = operatorsAndBrackets[l].ToString();
+                            bracketOpen = IsBracket(bracketOpen, l);
+                            for (int m = 0; m < operatorsAndBrackets.Length; m++)
+                            {
+                                expressionList[10] = operatorsAndBrackets[m].ToString();
+                                bracketOpen = IsBracket(bracketOpen, m);
+                                if (bracketOpen == 0)
+                                {
+                                    expressionList[12] = "_";
+                                    expressionLists.Add(new List<string>(expressionList));
+                                    string expressionListString = String.Join(" ", expressionList);
+                                    Console.WriteLine(expressionListString);
+                                }
+                                else
+                                {
+                                    if (bracketOpen == 1)
+                                    {
+                                        expressionList[12] = ")";
+                                        expressionLists.Add(new List<string>(expressionList));
+                                        string expressionListString = String.Join(" ", expressionList);
+                                        Console.WriteLine(expressionListString);
+                                    }
                                 }
                                 bracketOpen = IsBracketUndo(bracketOpen, m);
                             }
@@ -1102,7 +1191,7 @@ internal class Maintainance
 
 
         List<string> listOfWords = File.ReadAllLines(sourceTextFilePath).ToList();
-        List<string> listOf9LetterWordsOrLess = RemoveWordsGreaterThan9Letters(listOfWords);
+        HashSet<string> listOf9LetterWordsOrLess = RemoveWordsGreaterThan9Letters(listOfWords);
         listOf9LetterWordsOrLess.Add("Colour");
         string destinationTextFilePath9OrLess = Path.Combine(currentDirectory, "9LetterWordsOrLess.txt");
         File.WriteAllLines(destinationTextFilePath9OrLess, listOf9LetterWordsOrLess);
@@ -1159,6 +1248,8 @@ internal class Maintainance
                 case 1:
                     listOf1LetterWords.Add($"{word} {sortedWord}");
                     break;
+                case 0:
+                    break;
                 default:
                     Console.WriteLine("Strange???");
                     break;
@@ -1166,7 +1257,7 @@ internal class Maintainance
 
 
         }
-       
+
         File.WriteAllLines(destinationTextFilePath9, listOf9LetterWords);
         File.WriteAllLines(destinationTextFilePath8, listOf8LetterWords);
         File.WriteAllLines(destinationTextFilePath7, listOf7LetterWords);
@@ -1177,9 +1268,223 @@ internal class Maintainance
         File.WriteAllLines(destinationTextFilePath2, listOf2LetterWords);
         File.WriteAllLines(destinationTextFilePath1, listOf1LetterWords);
     }
-    private static List<string> RemoveWordsGreaterThan9Letters(List<string> listOfWords)
+
+    public static void NumberPermutationFileGenerator()
     {
-        List<string> words9LettersOrLess = new List<string>();
+        string[] numbersVariables = { "a", "b", "c", "d", "e", "f" };
+
+        List<List<string>> permutations = new List<List<string>>();
+        //length = 6
+        for (int i = 0; i < numbersVariables.Length; i++)
+        {
+            for (int j = 0; j < numbersVariables.Length; j++)
+            {
+                if (i != j)
+                {
+                    for (int k = 0; k < numbersVariables.Length; k++)
+                    {
+                        if (k != i && k != j)
+                        {
+                            for (int l = 0; l < numbersVariables.Length; l++)
+                            {
+                                if (l != i && l != j && l != k)
+                                {
+                                    for (int m = 0; m < numbersVariables.Length; m++)
+                                    {
+                                        if (m != i && m != j && m != k && m != l)
+                                        {
+                                            for (int n = 0; n < numbersVariables.Length; n++)
+                                            {
+                                                if (n != i && n != j && n != k && n != l && n != m)
+                                                {
+                                                    List<string> permutation = new List<string>();
+                                                    permutation.Add(numbersVariables[i]);
+                                                    permutation.Add(numbersVariables[j]);
+                                                    permutation.Add(numbersVariables[k]);
+                                                    permutation.Add(numbersVariables[l]);
+                                                    permutation.Add(numbersVariables[m]);
+                                                    permutation.Add(numbersVariables[n]);
+                                                    permutations.Add(permutation);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //length = 5
+        for (int i = 0; i < numbersVariables.Length; i++)
+        {
+            for (int j = 0; j < numbersVariables.Length; j++)
+            {
+                if (i != j)
+                {
+                    for (int k = 0; k < numbersVariables.Length; k++)
+                    {
+                        if (k != i && k != j)
+                        {
+                            for (int l = 0; l < numbersVariables.Length; l++)
+                            {
+                                if (l != i && l != j && l != k)
+                                {
+                                    for (int m = 0; m < numbersVariables.Length; m++)
+                                    {
+                                        if (m != i && m != j && m != k && m != l)
+                                        {
+                                            List<string> permutation = new List<string>();
+                                            permutation.Add(numbersVariables[i]);
+                                            permutation.Add(numbersVariables[j]);
+                                            permutation.Add(numbersVariables[k]);
+                                            permutation.Add(numbersVariables[l]);
+                                            permutation.Add(numbersVariables[m]);
+                                            permutations.Add(permutation);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //length = 4
+        for (int i = 0; i < numbersVariables.Length; i++)
+        {
+            for (int j = 0; j < numbersVariables.Length; j++)
+            {
+                if (i != j)
+                {
+                    for (int k = 0; k < numbersVariables.Length; k++)
+                    {
+                        if (k != i && k != j)
+                        {
+                            for (int l = 0; l < numbersVariables.Length; l++)
+                            {
+                                if (l != i && l != j && l != k)
+                                {
+                                    List<string> permutation = new List<string>();
+                                    permutation.Add(numbersVariables[i]);
+                                    permutation.Add(numbersVariables[j]);
+                                    permutation.Add(numbersVariables[k]);
+                                    permutation.Add(numbersVariables[l]);
+                                    permutations.Add(permutation);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //length = 3
+        for (int i = 0; i < numbersVariables.Length; i++)
+        {
+            for (int j = 0; j < numbersVariables.Length; j++)
+            {
+                if (i != j)
+                {
+                    for (int k = 0; k < numbersVariables.Length; k++)
+                    {
+                        if (k != i && k != j)
+                        {
+                            List<string> permutation = new List<string>();
+                            permutation.Add(numbersVariables[i]);
+                            permutation.Add(numbersVariables[j]);
+                            permutation.Add(numbersVariables[k]);
+                            permutations.Add(permutation);
+                        }
+                    }
+                }
+            }
+        }
+        //length = 2
+        for (int i = 0; i < numbersVariables.Length; i++)
+        {
+            for (int j = 0; j < numbersVariables.Length; j++)
+            {
+                if (i != j)
+                {
+                    List<string> permutation = new List<string>();
+                    permutation.Add(numbersVariables[i]);
+                    permutation.Add(numbersVariables[j]);
+                    permutations.Add(permutation);
+                }
+            }
+
+
+
+        }
+        //generate operator permutations and add to gaps
+        HashSet<List<string>> expressionLists = new HashSet<List<string>>();
+        foreach (List<string> permutation in permutations)
+        {
+            //there are 5 possible slots to place in operators 0-5
+            //there are 7 possible slots to place brackets, however each must be a pair
+            //( can be placed in gaps 0-6
+            // ) can be placed in gaps 1-7
+            // number of ( must equal number of )
+            //a ) cannot be placed before any (
+            //a ( cannot be placed after any )
+            List<string> expressionList = new List<string>();
+            foreach (string number in permutation)
+            {
+                expressionList.Add(",");
+                expressionList.Add(number.ToString());
+
+            }
+            expressionList.Add(",");
+
+            switch (permutation.Count)
+            {
+                case 6:
+                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength6(expressionList));
+                    break;
+                case 5:
+                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength5(expressionList));
+                    break;
+                case 4:
+                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength4(expressionList));
+                    break;
+                case 3:
+                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength3(expressionList));
+                    break;
+                case 2:
+                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength2(expressionList));
+                    break;
+                default:
+                    Console.WriteLine("Something wrong???");
+                    break;
+            }
+
+
+
+
+        }
+
+
+
+
+        //write to a file of permutations
+        List<string> permutationsFlat = new List<string>();
+        foreach (List<string> permutation in permutations)
+        {
+            string tempPermutation = "";
+            foreach (string equationSegment in permutation)
+            {
+                tempPermutation = tempPermutation + equationSegment;
+            }
+            permutationsFlat.Add(tempPermutation);
+        }
+        string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        string permutationsFilePath = Path.Combine(currentDirectory, "numbersRoundPermutations.txt");
+        File.WriteAllLines(permutationsFilePath, permutationsFlat);
+    }
+    private static HashSet<string> RemoveWordsGreaterThan9Letters(List<string> listOfWords)
+    {
+        HashSet<string> words9LettersOrLess = new HashSet<string>();
         foreach (string word in listOfWords)
         {
             if (word.Length <= 9)
