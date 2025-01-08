@@ -1,9 +1,10 @@
 ﻿using NCalc;
+
 internal class Program
 {
     private static void Main(string[] args)
     {
-        List<string> testList = new List<string> { ",", "a", ",", "b", ",", "c", ",", "d", ",", "e", ",", "f", "," };
+        List<string> testList = new List<string> { "a", ",", "b", ",", "c", ",", "d", ",", "e", ",", "f" };
         SolverHelpers.OperatorPermutationsLength6Rewrite(testList);
         Maintainance.NumberPermutationFileGenerator();
         Maintainance.TextFileGenerator();
@@ -743,70 +744,193 @@ internal class SolverHelpers
         //Logic rewrite required
         // +(, -(, *(, /(, )+ )- )* )/
         //These are only valid in certain positions
-        List<List<string>> expressionLists = new List<List<string>>();
-        for (int h = 0; h <= 1; h++)
+        //method
+
+        //first insert operators in positions, then do the brackets afterwards
+        List<List<string>> expressionListsBeforeBracketing = new List<List<string>>();
+        for (int n = 0; n < expressionList.Count; n = n + 3)
         {
-            int bracketOpen = 0;
-            if (h == 1)
-            {
-                expressionList[0] = "_";
-            }
-            else
-            {
-                expressionList[0] = "(";
-                bracketOpen++;
-            }
+            expressionList.Insert(n, "[");
+            expressionList.Insert(n + 2, "]");
+            n++;
+        }
+        string expressionListString = String.Join(" ", expressionList);
+        Console.WriteLine(expressionListString);
+        for (int i = 0; i < operators.Length; i++)
+        {
 
-            for (int i = 0; i < operatorsAndBrackets.Length; i++)
+            expressionList[3] = operators[i].ToString();
+            for (int j = 0; j < operators.Length; j++)
             {
-                bracketOpen = IsBracket(bracketOpen, i);
-
-                expressionList[2] = operatorsAndBrackets[i].ToString();
-                for (int j = 0; j < operatorsAndBrackets.Length; j++)
+                expressionList[7] = operators[j].ToString();
+                for (int k = 0; k < operators.Length; k++)
                 {
-                    expressionList[4] = operatorsAndBrackets[j].ToString();
-                    bracketOpen = IsBracket(bracketOpen, j);
-                    for (int k = 0; k < operatorsAndBrackets.Length; k++)
+                    expressionList[11] = operators[k].ToString();
+                    for (int l = 0; l < operators.Length; l++)
                     {
-                        expressionList[6] = operatorsAndBrackets[k].ToString();
-                        bracketOpen = IsBracket(bracketOpen, k);
-                        for (int l = 0; l < operatorsAndBrackets.Length; l++)
+                        expressionList[15] = operators[l].ToString();
+
+                        for (int m = 0; m < operators.Length; m++)
                         {
-                            expressionList[8] = operatorsAndBrackets[l].ToString();
-                            bracketOpen = IsBracket(bracketOpen, l);
-                            for (int m = 0; m < operatorsAndBrackets.Length; m++)
-                            {
-                                expressionList[10] = operatorsAndBrackets[m].ToString();
-                                bracketOpen = IsBracket(bracketOpen, m);
-                                if (bracketOpen == 0)
-                                {
-                                    expressionList[12] = "_";
-                                    expressionLists.Add(new List<string>(expressionList));
-                                    string expressionListString = String.Join(" ", expressionList);
-                                    Console.WriteLine(expressionListString);
-                                }
-                                else
-                                {
-                                    if (bracketOpen == 1)
-                                    {
-                                        expressionList[12] = ")";
-                                        expressionLists.Add(new List<string>(expressionList));
-                                        string expressionListString = String.Join(" ", expressionList);
-                                        Console.WriteLine(expressionListString);
-                                    }
-                                }
-                                bracketOpen = IsBracketUndo(bracketOpen, m);
-                            }
-                            bracketOpen = IsBracketUndo(bracketOpen, l);
+                            expressionList[19] = operators[m].ToString();
+
+
+                            expressionListsBeforeBracketing.Add(expressionList);
+                            expressionListString = String.Join(" ", expressionList);
+                            //Console.WriteLine(expressionListString);
+
                         }
-                        bracketOpen = IsBracketUndo(bracketOpen, k);
                     }
-                    bracketOpen = IsBracketUndo(bracketOpen, j);
                 }
-                bracketOpen = IsBracketUndo(bracketOpen, i);
             }
         }
-        return expressionLists;
+        List<List<string>> expressionListsAfterBracketing = new List<List<string>>();
+        //add the different ways of bracketing with the aforementioned checks of not having (a).
+        //12 loops i through 
+        foreach (List<string> expressionListBeforeBracketing in expressionListsBeforeBracketing)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    for (int k = 0; k < 2; k++)
+                    {
+                        for (int l = 0; l < 2; l++)
+                        {
+                            for (int m = 0; m < 2; m++)
+                            {
+                                for (int n = 0; n < 2; n++)
+                                {
+                                    for (int o = 0; o < 2; o++)
+                                    {
+                                        for (int p = 0; p < 2; p++)
+                                        {
+                                            for (int q = 0; q < 2; q++)
+                                            {
+                                                for (int r = 0; r < 2; r++)
+                                                {
+                                                    for (int s = 0; s < 2; s++)
+                                                    {
+                                                        for (int t = 0; t < 2; t++)
+                                                        {
+
+                                                            if (i == 1)
+                                                            {
+                                                                expressionListBeforeBracketing[0] = "(";
+                                                            }
+                                                            else
+                                                            {
+                                                                expressionListBeforeBracketing[0] = "_";
+                                                            }
+                                                            if (j == 1 && i == 0)
+                                                            {
+                                                                expressionListBeforeBracketing[2] = ")";
+                                                            }
+                                                            else
+                                                            {
+                                                                expressionListBeforeBracketing[2] = "_";
+                                                            }
+                                                            if (k == 1)
+                                                            {
+                                                                expressionListBeforeBracketing[4] = "(";
+                                                            }
+                                                            else
+                                                            {
+                                                                expressionListBeforeBracketing[4] = "_";
+                                                            }
+                                                            if (l == 1&&k==0)
+                                                            {
+                                                                expressionListBeforeBracketing[6] = ")";
+                                                            }
+                                                            else
+                                                            {
+                                                                expressionListBeforeBracketing[6] = "_";
+                                                            }
+                                                            if (m == 1)
+                                                            {
+                                                                expressionListBeforeBracketing[8] = "(";
+                                                            }
+                                                            else
+                                                            {
+                                                                expressionListBeforeBracketing[8] = "_";
+                                                            }
+                                                            if (n == 1&&m==0)
+                                                            {
+                                                                expressionListBeforeBracketing[10] = ")";
+                                                            }
+                                                            else
+                                                            {
+                                                                expressionListBeforeBracketing[10] = "_";
+                                                            }
+                                                            if (o == 1)
+                                                            {
+                                                                expressionListBeforeBracketing[12] = "(";
+                                                            }
+                                                            else
+                                                            {
+                                                                expressionListBeforeBracketing[12] = "_";
+                                                            }
+                                                            if (p == 1&&o==0)
+                                                            {
+                                                                expressionListBeforeBracketing[14] = ")";
+                                                            }
+                                                            else
+                                                            {
+                                                                expressionListBeforeBracketing[14] = "_";
+                                                            }
+                                                            if (q == 1)
+                                                            {
+                                                                expressionListBeforeBracketing[16] = "(";
+                                                            }
+                                                            else
+                                                            {
+                                                                expressionListBeforeBracketing[16] = "_";
+                                                            }
+                                                            if (r == 1&&q==0)
+                                                            {
+                                                                expressionListBeforeBracketing[18] = ")";
+                                                            }
+                                                            else
+                                                            {
+                                                                expressionListBeforeBracketing[18] = "_";
+                                                            }
+                                                            if (s == 1)
+                                                            {
+                                                                expressionListBeforeBracketing[20] = "(";
+                                                            }
+                                                            else
+                                                            {
+
+                                                                expressionListBeforeBracketing[20] = "_";
+                                                            }
+                                                            if (t == 0&&s==0)
+                                                            {
+                                                                expressionListBeforeBracketing[22] = ")";
+                                                            }
+                                                            else
+                                                            {
+                                                                expressionListBeforeBracketing[22] = "_";
+                                                            }
+                                                            if (expressionListBeforeBracketing.Count(item => item == "(") == expressionListBeforeBracketing.Count(item => item == ")"))
+                                                            {
+                                                                expressionListsAfterBracketing.Add(new List<string>(expressionListBeforeBracketing));
+                                                                string expressionListAfterBracketingString = String.Join(" ", expressionListBeforeBracketing);
+                                                                Console.WriteLine(expressionListAfterBracketingString);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return expressionListsAfterBracketing;
 
     }
     public static List<List<string>> OperatorPermutationsLength6(List<string> expressionList)
