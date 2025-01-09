@@ -522,12 +522,12 @@ internal class Solvers
             List<string> expressionList = new List<string>();
             foreach (int number in permutation)
             {
-                
+
                 expressionList.Add(number.ToString());
                 expressionList.Add(",");
 
             }
-            
+
 
             switch (permutation.Count)
             {
@@ -764,6 +764,7 @@ internal class SolverHelpers
         //method
 
         //first insert operators in positions, then do the brackets afterwards
+        //check if operators that have brackets around it are not commutative
         List<List<string>> expressionListsBeforeBracketing = new List<List<string>>();
         for (int n = 0; n < expressionList.Count; n = n + 3)
         {
@@ -792,11 +793,11 @@ internal class SolverHelpers
                             int lengthBefore = expressionListsBeforeBracketing.Count;
                             // Create a new copy of expressionList and add it to the list
                             expressionListsBeforeBracketing.Add(new List<string>(expressionList));
-                            if (lengthBefore != expressionListsBeforeBracketing.Count)
-                            {
-                                expressionListString = String.Join(" ", expressionList);
-                                //Console.WriteLine(expressionListString);
-                            }
+                            //if (lengthBefore != expressionListsBeforeBracketing.Count)
+                            //{
+                            //    expressionListString = String.Join(" ", expressionList);
+                            //    //Console.WriteLine(expressionListString);
+                            //}
 
                         }
                     }
@@ -809,6 +810,11 @@ internal class SolverHelpers
 
         // only check if expression contains operators * or /.
         //Ignore if expression is all *.   6456
+        return AddBracketsLength6(expressionListsBeforeBracketing, expressionListsAfterBracketing);
+    }
+
+    private static HashSet<List<string>> AddBracketsLength6(List<List<string>> expressionListsBeforeBracketing, HashSet<List<string>> expressionListsAfterBracketing)
+    {
         foreach (List<string> expressionListBeforeBracketing in expressionListsBeforeBracketing)
         {
             for (int i = 0; i < 2; i++)
@@ -842,120 +848,96 @@ internal class SolverHelpers
                                                                 expressionListBeforeBracketing[0] = "(";
                                                                 openBrackets++;
                                                             }
-                                                            else
-                                                            {
-                                                                expressionListBeforeBracketing[0] = "_";
-                                                            }
+
                                                             if (j == 1 && i == 0 && openBrackets > 0)
                                                             {
                                                                 expressionListBeforeBracketing[2] = ")";
                                                                 closedBrackets++;
                                                             }
-                                                            else
-                                                            {
-                                                                expressionListBeforeBracketing[2] = "_";
-                                                            }
+
                                                             if (k == 1)
                                                             {
                                                                 expressionListBeforeBracketing[4] = "(";
                                                                 openBrackets++;
                                                             }
-                                                            else
-                                                            {
-                                                                expressionListBeforeBracketing[4] = "_";
-                                                            }
+
                                                             if (l == 1 && k == 0 && openBrackets > 0)
                                                             {
                                                                 expressionListBeforeBracketing[6] = ")";
                                                                 closedBrackets++;
                                                             }
-                                                            else
-                                                            {
-                                                                expressionListBeforeBracketing[6] = "_";
-                                                            }
+
                                                             if (m == 1)
                                                             {
                                                                 expressionListBeforeBracketing[8] = "(";
                                                                 openBrackets++;
                                                             }
-                                                            else
-                                                            {
-                                                                expressionListBeforeBracketing[8] = "_";
-                                                            }
+
                                                             if (n == 1 && m == 0 && openBrackets > 0)
                                                             {
                                                                 expressionListBeforeBracketing[10] = ")";
                                                                 closedBrackets++;
                                                             }
-                                                            else
-                                                            {
-                                                                expressionListBeforeBracketing[10] = "_";
-                                                            }
+
                                                             if (o == 1)
                                                             {
                                                                 expressionListBeforeBracketing[12] = "(";
                                                                 openBrackets++;
                                                             }
-                                                            else
-                                                            {
-                                                                expressionListBeforeBracketing[12] = "_";
-                                                            }
+
                                                             if (p == 1 && o == 0 && openBrackets > 0)
                                                             {
                                                                 expressionListBeforeBracketing[14] = ")";
                                                                 closedBrackets++;
                                                             }
-                                                            else
-                                                            {
-                                                                expressionListBeforeBracketing[14] = "_";
-                                                            }
+
                                                             if (q == 1)
                                                             {
                                                                 expressionListBeforeBracketing[16] = "(";
                                                                 openBrackets++;
                                                             }
-                                                            else
-                                                            {
-                                                                expressionListBeforeBracketing[16] = "_";
-                                                            }
+
                                                             if (r == 1 && q == 0 && openBrackets > 0)
                                                             {
                                                                 expressionListBeforeBracketing[18] = ")";
                                                                 closedBrackets++;
                                                             }
-                                                            else
-                                                            {
-                                                                expressionListBeforeBracketing[18] = "_";
-                                                            }
+
                                                             if (s == 1)
                                                             {
                                                                 expressionListBeforeBracketing[20] = "(";
                                                                 openBrackets++;
                                                             }
-                                                            else
-                                                            {
 
-                                                                expressionListBeforeBracketing[20] = "_";
-                                                            }
                                                             if (t == 0 && s == 0 && openBrackets > 0)
                                                             {
                                                                 expressionListBeforeBracketing[22] = ")";
                                                                 closedBrackets++;
                                                             }
-                                                            else
-                                                            {
-                                                                expressionListBeforeBracketing[22] = "_";
-                                                            }
+
                                                             if (openBrackets == closedBrackets)
                                                             {
-                                                                int lengthBefore = expressionListsAfterBracketing.Count;
-                                                                expressionListsAfterBracketing.Add(new List<string>(expressionListBeforeBracketing));
-
-
-                                                                if (lengthBefore != expressionListsAfterBracketing.Count) {
-                                                                    string expressionListAfterBracketingString = String.Join(" ", expressionListBeforeBracketing);
-                                                                    //Console.WriteLine(expressionListAfterBracketingString);
+                                                                for (int u = expressionListBeforeBracketing.Count - 1; u >= 0; u = u - 3)
+                                                                {
+                                                                    if (expressionListBeforeBracketing[u] == "_")
+                                                                    {
+                                                                        expressionListBeforeBracketing.RemoveAt(u);
+                                                                    }
+                                                                    if (expressionListBeforeBracketing[u - 2] == "_")
+                                                                    {
+                                                                        expressionListBeforeBracketing.RemoveAt(u - 2);
+                                                                    }
                                                                 }
+                                                                if (!SolverHelpers.CanBracketsBeSimplified(expressionListBeforeBracketing))
+                                                                {
+                                                                    expressionListsAfterBracketing.Add(new List<string>(expressionListBeforeBracketing));
+                                                                }
+
+                                                                //if (lengthBefore != expressionListsAfterBracketing.Count)
+                                                                //{
+                                                                //    string expressionListAfterBracketingString = String.Join(" ", expressionListBeforeBracketing);
+                                                                //    //Console.WriteLine(expressionListAfterBracketingString);
+                                                                //}
                                                             }
                                                         }
                                                     }
@@ -971,8 +953,13 @@ internal class SolverHelpers
             }
         }
         return expressionListsAfterBracketing;
-
     }
+
+    private static bool CanBracketsBeSimplified(List<string> expressionListBeforeBracketing)
+    {
+        throw new NotImplementedException();
+    }
+
     public static List<List<string>> OperatorPermutationsLength6(List<string> expressionList)
     {
         //cannot have closed bracket if one is not open
@@ -1022,16 +1009,14 @@ internal class SolverHelpers
                                     string expressionListString = String.Join(" ", expressionList);
                                     Console.WriteLine(expressionListString);
                                 }
-                                else
+                                else if (bracketOpen == 1)
                                 {
-                                    if (bracketOpen == 1)
-                                    {
-                                        expressionList[12] = ")";
-                                        expressionLists.Add(new List<string>(expressionList));
-                                        string expressionListString = String.Join(" ", expressionList);
-                                        Console.WriteLine(expressionListString);
-                                    }
+                                    expressionList[12] = ")";
+                                    expressionLists.Add(new List<string>(expressionList));
+                                    string expressionListString = String.Join(" ", expressionList);
+                                    Console.WriteLine(expressionListString);
                                 }
+
                                 bracketOpen = IsBracketUndo(bracketOpen, m);
                             }
                             bracketOpen = IsBracketUndo(bracketOpen, l);
@@ -1432,12 +1417,239 @@ internal class Maintainance
         File.WriteAllLines(destinationTextFilePath1, listOf1LetterWords);
     }
 
+    static string[] numbersVariables = { "a", "b", "c", "d", "e", "f" };
     public static void NumberPermutationFileGenerator()
     {
-        string[] numbersVariables = { "a", "b", "c", "d", "e", "f" };
+
         //add commas between, and rewrite permutation generation to account for that
 
         List<List<string>> permutations = new List<List<string>>();
+        NumbersLength6Permutations(permutations);
+        NumbersLength5Permutations(permutations);
+        NumbersLength4Permutations(permutations);
+        NumbersLength3Permutations(permutations);
+        NumbersLength2Permutations(permutations);
+        //generate operator permutations and add to gaps
+        HashSet<List<string>> expressionLists = new HashSet<List<string>>();
+        // Initialize indices for desired lengths.
+        int index11 = -1, index9 = -1, index7 = -1, index5 = -1, index3 = -1;
+
+        // Loop through the permutations to find the first index of each length.
+        for (int i = 0; i < permutations.Count; i++)
+        {
+            int count = permutations[i].Count;
+
+            if (count == 11 && index11 == -1)
+            {
+                index11 = i;
+            }
+            else if (count == 9 && index9 == -1)
+            {
+                index9 = i;
+            }
+            else if (count == 7 && index7 == -1)
+            {
+                index7 = i;
+            }
+            else if (count == 5 && index5 == -1)
+            {
+                index5 = i;
+            }
+            else if (count == 3 && index3 == -1)
+            {
+                index3 = i;
+            }
+            if (index11 != -1 && index9 != -1 && index7 != -1 && index5 != -1 && index3 != -1)
+            {
+                break;
+            }
+        }
+
+        for (int i = 0; i < permutations.Count; i++)
+        {
+            //there are 5 possible slots to place in operators 0-5
+            //there are 7 possible slots to place brackets, however each must be a pair
+            //( can be placed in gaps 0-6
+            // ) can be placed in gaps 1-7
+            // number of ( must equal number of )
+            //a ) cannot be placed before any (
+            //a ( cannot be placed after any )
+            List<string> permutation = new List<string>(permutations[i]);
+            if (i < index9)
+            {
+                expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength6Rewrite(permutation));
+            }
+            else if (i < index7)
+            {
+                expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength5(permutation));
+            }
+            else
+            {
+
+                if (i < index5)
+                {
+                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength4(permutation));
+
+                }
+                else
+                {
+                    if (i < index3)
+                    {
+                        expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength3(permutation));
+                    }
+                    else
+                    {
+                        expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength2(permutation));
+                    }
+                }
+            }
+        }
+
+        //write to a file of permutations
+        List<string> permutationsFlat = new List<string>();
+        foreach (List<string> permutation in permutations)
+        {
+            string tempPermutation = "";
+            foreach (string equationSegment in permutation)
+            {
+                tempPermutation = tempPermutation + equationSegment;
+            }
+            permutationsFlat.Add(tempPermutation);
+        }
+        string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        string permutationsFilePath = Path.Combine(currentDirectory, "numbersRoundPermutations.txt");
+        File.WriteAllLines(permutationsFilePath, permutationsFlat);
+    }
+
+    private static void NumbersLength2Permutations(List<List<string>> permutations)
+    {
+        //length = 2
+        for (int i = 0; i < numbersVariables.Length; i++)
+        {
+            for (int j = 0; j < numbersVariables.Length; j++)
+            {
+                if (i != j)
+                {
+                    List<string> permutation = new List<string>();
+                    permutation.Add(numbersVariables[i]);
+                    permutation.Add(",");
+                    permutation.Add(numbersVariables[j]);
+                    permutations.Add(new List<string>(permutation));
+                }
+            }
+
+
+
+        }
+    }
+
+    private static void NumbersLength3Permutations(List<List<string>> permutations)
+    {
+        //length = 3
+        for (int i = 0; i < numbersVariables.Length; i++)
+        {
+            for (int j = 0; j < numbersVariables.Length; j++)
+            {
+                if (i != j)
+                {
+                    for (int k = 0; k < numbersVariables.Length; k++)
+                    {
+                        if (k != i && k != j)
+                        {
+                            List<string> permutation = new List<string>();
+                            permutation.Add(numbersVariables[i]);
+                            permutation.Add(",");
+                            permutation.Add(numbersVariables[j]);
+                            permutation.Add(",");
+                            permutation.Add(numbersVariables[k]);
+                            permutations.Add(new List<string>(permutation));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static void NumbersLength4Permutations(List<List<string>> permutations)
+    {
+        //length = 4
+        for (int i = 0; i < numbersVariables.Length; i++)
+        {
+            for (int j = 0; j < numbersVariables.Length; j++)
+            {
+                if (i != j)
+                {
+                    for (int k = 0; k < numbersVariables.Length; k++)
+                    {
+                        if (k != i && k != j)
+                        {
+                            for (int l = 0; l < numbersVariables.Length; l++)
+                            {
+                                if (l != i && l != j && l != k)
+                                {
+                                    List<string> permutation = new List<string>();
+                                    permutation.Add(numbersVariables[i]);
+                                    permutation.Add(",");
+                                    permutation.Add(numbersVariables[j]);
+                                    permutation.Add(",");
+                                    permutation.Add(numbersVariables[k]);
+                                    permutation.Add(",");
+                                    permutation.Add(numbersVariables[l]);
+                                    permutations.Add(new List<string>(permutation));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static void NumbersLength5Permutations(List<List<string>> permutations)
+    {
+        //length = 5
+        for (int i = 0; i < numbersVariables.Length; i++)
+        {
+            for (int j = 0; j < numbersVariables.Length; j++)
+            {
+                if (i != j)
+                {
+                    for (int k = 0; k < numbersVariables.Length; k++)
+                    {
+                        if (k != i && k != j)
+                        {
+                            for (int l = 0; l < numbersVariables.Length; l++)
+                            {
+                                if (l != i && l != j && l != k)
+                                {
+                                    for (int m = 0; m < numbersVariables.Length; m++)
+                                    {
+                                        if (m != i && m != j && m != k && m != l)
+                                        {
+                                            List<string> permutation = new List<string>();
+                                            permutation.Add(numbersVariables[i]);
+                                            permutation.Add(",");
+                                            permutation.Add(numbersVariables[j]);
+                                            permutation.Add(",");
+                                            permutation.Add(numbersVariables[k]);
+                                            permutation.Add(",");
+                                            permutation.Add(numbersVariables[l]);
+                                            permutation.Add(",");
+                                            permutation.Add(numbersVariables[m]);
+                                            permutations.Add(new List<string>(permutation));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static void NumbersLength6Permutations(List<List<string>> permutations)
+    {
         //length = 6
         for (int i = 0; i < numbersVariables.Length; i++)
         {
@@ -1485,175 +1697,8 @@ internal class Maintainance
                 }
             }
         }
-        //length = 5
-        for (int i = 0; i < numbersVariables.Length; i++)
-        {
-            for (int j = 0; j < numbersVariables.Length; j++)
-            {
-                if (i != j)
-                {
-                    for (int k = 0; k < numbersVariables.Length; k++)
-                    {
-                        if (k != i && k != j)
-                        {
-                            for (int l = 0; l < numbersVariables.Length; l++)
-                            {
-                                if (l != i && l != j && l != k)
-                                {
-                                    for (int m = 0; m < numbersVariables.Length; m++)
-                                    {
-                                        if (m != i && m != j && m != k && m != l)
-                                        {
-                                            List<string> permutation = new List<string>();
-                                            permutation.Add(numbersVariables[i]);
-                                            permutation.Add(",");
-                                            permutation.Add(numbersVariables[j]);
-                                            permutation.Add(",");
-                                            permutation.Add(numbersVariables[k]);
-                                            permutation.Add(",");
-                                            permutation.Add(numbersVariables[l]);
-                                            permutation.Add(",");
-                                            permutation.Add(numbersVariables[m]);
-                                            permutations.Add(new List<string>(permutation));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        //length = 4
-        for (int i = 0; i < numbersVariables.Length; i++)
-        {
-            for (int j = 0; j < numbersVariables.Length; j++)
-            {
-                if (i != j)
-                {
-                    for (int k = 0; k < numbersVariables.Length; k++)
-                    {
-                        if (k != i && k != j)
-                        {
-                            for (int l = 0; l < numbersVariables.Length; l++)
-                            {
-                                if (l != i && l != j && l != k)
-                                {
-                                    List<string> permutation = new List<string>();
-                                    permutation.Add(numbersVariables[i]);
-                                    permutation.Add(",");
-                                    permutation.Add(numbersVariables[j]);
-                                    permutation.Add(",");
-                                    permutation.Add(numbersVariables[k]);
-                                    permutation.Add(",");
-                                    permutation.Add(numbersVariables[l]);
-                                    permutations.Add(new List<string>(permutation));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        //length = 3
-        for (int i = 0; i < numbersVariables.Length; i++)
-        {
-            for (int j = 0; j < numbersVariables.Length; j++)
-            {
-                if (i != j)
-                {
-                    for (int k = 0; k < numbersVariables.Length; k++)
-                    {
-                        if (k != i && k != j)
-                        {
-                            List<string> permutation = new List<string>();
-                            permutation.Add(numbersVariables[i]);
-                            permutation.Add(",");
-                            permutation.Add(numbersVariables[j]);
-                            permutation.Add(",");
-                            permutation.Add(numbersVariables[k]);
-                            permutations.Add(new List<string>(permutation));
-                        }
-                    }
-                }
-            }
-        }
-        //length = 2
-        for (int i = 0; i < numbersVariables.Length; i++)
-        {
-            for (int j = 0; j < numbersVariables.Length; j++)
-            {
-                if (i != j)
-                {
-                    List<string> permutation = new List<string>();
-                    permutation.Add(numbersVariables[i]);
-                    permutation.Add(",");
-                    permutation.Add(numbersVariables[j]);
-                    permutations.Add(new List<string>(permutation));
-                }
-            }
-
-
-
-        }
-        //generate operator permutations and add to gaps
-        HashSet<List<string>> expressionLists = new HashSet<List<string>>();
-        foreach (List<string> permutation in permutations)
-        {
-            //there are 5 possible slots to place in operators 0-5
-            //there are 7 possible slots to place brackets, however each must be a pair
-            //( can be placed in gaps 0-6
-            // ) can be placed in gaps 1-7
-            // number of ( must equal number of )
-            //a ) cannot be placed before any (
-            //a ( cannot be placed after any )
-            List<string> expressionList = new List<string>(permutation);
-
-            switch (permutation.Count)
-            {
-                case 11:
-                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength6Rewrite(expressionList));
-                    break;
-                case 9:
-                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength5(expressionList));
-                    break;
-                case 7:
-                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength4(expressionList));
-                    break;
-                case 5:
-                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength3(expressionList));
-                    break;
-                case 3:
-                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength2(expressionList));
-                    break;
-                default:
-                    Console.WriteLine("Something wrong???");
-                    break;
-            }
-
-
-
-
-        }
-
-
-
-
-        //write to a file of permutations
-        List<string> permutationsFlat = new List<string>();
-        foreach (List<string> permutation in permutations)
-        {
-            string tempPermutation = "";
-            foreach (string equationSegment in permutation)
-            {
-                tempPermutation = tempPermutation + equationSegment;
-            }
-            permutationsFlat.Add(tempPermutation);
-        }
-        string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        string permutationsFilePath = Path.Combine(currentDirectory, "numbersRoundPermutations.txt");
-        File.WriteAllLines(permutationsFilePath, permutationsFlat);
     }
+
     private static HashSet<string> RemoveWordsGreaterThan9Letters(List<string> listOfWords)
     {
         HashSet<string> words9LettersOrLess = new HashSet<string>();
