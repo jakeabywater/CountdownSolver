@@ -4,12 +4,28 @@ internal class Program
 {
     private static void Main(string[] args)
     {
+        Console.WriteLine("Do you want to test or run? Enter T to test, R to run.");
+        string testing = Console.ReadLine();
+        switch (testing.ToUpper())
+        {
+            case "R":
+                MainMaster();
+                break;
+
+            case "T":
+                MainTesting();
+                break;
+        }
+    }
+    private static void MainMaster()
+    {
+        RunSolver();
+    }
+    private static void MainTesting()
+    {
         List<string> testList = new List<string> { "a", ",", "b", ",", "c", ",", "d", ",", "e", ",", "f" };
-        SolverHelpers.OperatorPermutationsLength6Rewrite(testList);
         Maintainance.NumberPermutationFileGenerator();
         Maintainance.TextFileGenerator();
-        RunSolver();
-
     }
 
     private static void RunSolver()
@@ -506,11 +522,12 @@ internal class Solvers
             List<string> expressionList = new List<string>();
             foreach (int number in permutation)
             {
-                expressionList.Add(",");
+                
                 expressionList.Add(number.ToString());
+                expressionList.Add(",");
 
             }
-            expressionList.Add(",");
+            
 
             switch (permutation.Count)
             {
@@ -585,7 +602,7 @@ internal class Solvers
 }
 internal class SolverHelpers
 {
-    static char[] operators = { '+', '-', '-', '/' };
+    static char[] operators = { '+', '-', '*', '/' };
     static char[] brackets = { '(', ')' };
     static char[] operatorsAndBrackets = { '+', '-', '*', '/', '(', ')' };
 
@@ -736,9 +753,9 @@ internal class SolverHelpers
         return permutations;
     }
 
-    public static List<List<string>> OperatorPermutationsLength6Rewrite(List<string> expressionList)
+    public static HashSet<List<string>> OperatorPermutationsLength6Rewrite(List<string> expressionList)
     {
-
+        char[] operators = { '+', '-', '*', '/' };
         //cannot have closed bracket if one is not open
         //closed brackets must have operators before and after
         //Logic rewrite required
@@ -755,7 +772,6 @@ internal class SolverHelpers
             n++;
         }
         string expressionListString = String.Join(" ", expressionList);
-        Console.WriteLine(expressionListString);
         for (int i = 0; i < operators.Length; i++)
         {
 
@@ -773,20 +789,26 @@ internal class SolverHelpers
                         for (int m = 0; m < operators.Length; m++)
                         {
                             expressionList[19] = operators[m].ToString();
-
-
-                            expressionListsBeforeBracketing.Add(expressionList);
-                            expressionListString = String.Join(" ", expressionList);
-                            //Console.WriteLine(expressionListString);
+                            int lengthBefore = expressionListsBeforeBracketing.Count;
+                            // Create a new copy of expressionList and add it to the list
+                            expressionListsBeforeBracketing.Add(new List<string>(expressionList));
+                            if (lengthBefore != expressionListsBeforeBracketing.Count)
+                            {
+                                expressionListString = String.Join(" ", expressionList);
+                                //Console.WriteLine(expressionListString);
+                            }
 
                         }
                     }
                 }
             }
         }
-        List<List<string>> expressionListsAfterBracketing = new List<List<string>>();
+        HashSet<List<string>> expressionListsAfterBracketing = new HashSet<List<string>>();
         //add the different ways of bracketing with the aforementioned checks of not having (a).
         //12 loops i through 
+
+        // only check if expression contains operators * or /.
+        //Ignore if expression is all *.   6456
         foreach (List<string> expressionListBeforeBracketing in expressionListsBeforeBracketing)
         {
             for (int i = 0; i < 2; i++)
@@ -813,18 +835,21 @@ internal class SolverHelpers
                                                     {
                                                         for (int t = 0; t < 2; t++)
                                                         {
-
+                                                            int openBrackets = 0;
+                                                            int closedBrackets = 0;
                                                             if (i == 1)
                                                             {
                                                                 expressionListBeforeBracketing[0] = "(";
+                                                                openBrackets++;
                                                             }
                                                             else
                                                             {
                                                                 expressionListBeforeBracketing[0] = "_";
                                                             }
-                                                            if (j == 1 && i == 0)
+                                                            if (j == 1 && i == 0 && openBrackets > 0)
                                                             {
                                                                 expressionListBeforeBracketing[2] = ")";
+                                                                closedBrackets++;
                                                             }
                                                             else
                                                             {
@@ -833,14 +858,16 @@ internal class SolverHelpers
                                                             if (k == 1)
                                                             {
                                                                 expressionListBeforeBracketing[4] = "(";
+                                                                openBrackets++;
                                                             }
                                                             else
                                                             {
                                                                 expressionListBeforeBracketing[4] = "_";
                                                             }
-                                                            if (l == 1&&k==0)
+                                                            if (l == 1 && k == 0 && openBrackets > 0)
                                                             {
                                                                 expressionListBeforeBracketing[6] = ")";
+                                                                closedBrackets++;
                                                             }
                                                             else
                                                             {
@@ -849,14 +876,16 @@ internal class SolverHelpers
                                                             if (m == 1)
                                                             {
                                                                 expressionListBeforeBracketing[8] = "(";
+                                                                openBrackets++;
                                                             }
                                                             else
                                                             {
                                                                 expressionListBeforeBracketing[8] = "_";
                                                             }
-                                                            if (n == 1&&m==0)
+                                                            if (n == 1 && m == 0 && openBrackets > 0)
                                                             {
                                                                 expressionListBeforeBracketing[10] = ")";
+                                                                closedBrackets++;
                                                             }
                                                             else
                                                             {
@@ -865,14 +894,16 @@ internal class SolverHelpers
                                                             if (o == 1)
                                                             {
                                                                 expressionListBeforeBracketing[12] = "(";
+                                                                openBrackets++;
                                                             }
                                                             else
                                                             {
                                                                 expressionListBeforeBracketing[12] = "_";
                                                             }
-                                                            if (p == 1&&o==0)
+                                                            if (p == 1 && o == 0 && openBrackets > 0)
                                                             {
                                                                 expressionListBeforeBracketing[14] = ")";
+                                                                closedBrackets++;
                                                             }
                                                             else
                                                             {
@@ -881,14 +912,16 @@ internal class SolverHelpers
                                                             if (q == 1)
                                                             {
                                                                 expressionListBeforeBracketing[16] = "(";
+                                                                openBrackets++;
                                                             }
                                                             else
                                                             {
                                                                 expressionListBeforeBracketing[16] = "_";
                                                             }
-                                                            if (r == 1&&q==0)
+                                                            if (r == 1 && q == 0 && openBrackets > 0)
                                                             {
                                                                 expressionListBeforeBracketing[18] = ")";
+                                                                closedBrackets++;
                                                             }
                                                             else
                                                             {
@@ -897,25 +930,32 @@ internal class SolverHelpers
                                                             if (s == 1)
                                                             {
                                                                 expressionListBeforeBracketing[20] = "(";
+                                                                openBrackets++;
                                                             }
                                                             else
                                                             {
 
                                                                 expressionListBeforeBracketing[20] = "_";
                                                             }
-                                                            if (t == 0&&s==0)
+                                                            if (t == 0 && s == 0 && openBrackets > 0)
                                                             {
                                                                 expressionListBeforeBracketing[22] = ")";
+                                                                closedBrackets++;
                                                             }
                                                             else
                                                             {
                                                                 expressionListBeforeBracketing[22] = "_";
                                                             }
-                                                            if (expressionListBeforeBracketing.Count(item => item == "(") == expressionListBeforeBracketing.Count(item => item == ")"))
+                                                            if (openBrackets == closedBrackets)
                                                             {
+                                                                int lengthBefore = expressionListsAfterBracketing.Count;
                                                                 expressionListsAfterBracketing.Add(new List<string>(expressionListBeforeBracketing));
-                                                                string expressionListAfterBracketingString = String.Join(" ", expressionListBeforeBracketing);
-                                                                Console.WriteLine(expressionListAfterBracketingString);
+
+
+                                                                if (lengthBefore != expressionListsAfterBracketing.Count) {
+                                                                    string expressionListAfterBracketingString = String.Join(" ", expressionListBeforeBracketing);
+                                                                    //Console.WriteLine(expressionListAfterBracketingString);
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -1260,7 +1300,6 @@ internal class SolverHelpers
             throw new Exception("Invalid expression");
         }
     }
-
 }
 
 internal class Operators
@@ -1295,10 +1334,10 @@ internal class Operators
         }
         return a / b;
     }
-
-
-
 }
+
+
+
 
 
 
@@ -1396,6 +1435,7 @@ internal class Maintainance
     public static void NumberPermutationFileGenerator()
     {
         string[] numbersVariables = { "a", "b", "c", "d", "e", "f" };
+        //add commas between, and rewrite permutation generation to account for that
 
         List<List<string>> permutations = new List<List<string>>();
         //length = 6
@@ -1423,12 +1463,17 @@ internal class Maintainance
                                                 {
                                                     List<string> permutation = new List<string>();
                                                     permutation.Add(numbersVariables[i]);
+                                                    permutation.Add(",");
                                                     permutation.Add(numbersVariables[j]);
+                                                    permutation.Add(",");
                                                     permutation.Add(numbersVariables[k]);
+                                                    permutation.Add(",");
                                                     permutation.Add(numbersVariables[l]);
+                                                    permutation.Add(",");
                                                     permutation.Add(numbersVariables[m]);
+                                                    permutation.Add(",");
                                                     permutation.Add(numbersVariables[n]);
-                                                    permutations.Add(permutation);
+                                                    permutations.Add(new List<string>(permutation));
                                                 }
                                             }
                                         }
@@ -1461,11 +1506,15 @@ internal class Maintainance
                                         {
                                             List<string> permutation = new List<string>();
                                             permutation.Add(numbersVariables[i]);
+                                            permutation.Add(",");
                                             permutation.Add(numbersVariables[j]);
+                                            permutation.Add(",");
                                             permutation.Add(numbersVariables[k]);
+                                            permutation.Add(",");
                                             permutation.Add(numbersVariables[l]);
+                                            permutation.Add(",");
                                             permutation.Add(numbersVariables[m]);
-                                            permutations.Add(permutation);
+                                            permutations.Add(new List<string>(permutation));
                                         }
                                     }
                                 }
@@ -1492,10 +1541,13 @@ internal class Maintainance
                                 {
                                     List<string> permutation = new List<string>();
                                     permutation.Add(numbersVariables[i]);
+                                    permutation.Add(",");
                                     permutation.Add(numbersVariables[j]);
+                                    permutation.Add(",");
                                     permutation.Add(numbersVariables[k]);
+                                    permutation.Add(",");
                                     permutation.Add(numbersVariables[l]);
-                                    permutations.Add(permutation);
+                                    permutations.Add(new List<string>(permutation));
                                 }
                             }
                         }
@@ -1516,9 +1568,11 @@ internal class Maintainance
                         {
                             List<string> permutation = new List<string>();
                             permutation.Add(numbersVariables[i]);
+                            permutation.Add(",");
                             permutation.Add(numbersVariables[j]);
+                            permutation.Add(",");
                             permutation.Add(numbersVariables[k]);
-                            permutations.Add(permutation);
+                            permutations.Add(new List<string>(permutation));
                         }
                     }
                 }
@@ -1533,8 +1587,9 @@ internal class Maintainance
                 {
                     List<string> permutation = new List<string>();
                     permutation.Add(numbersVariables[i]);
+                    permutation.Add(",");
                     permutation.Add(numbersVariables[j]);
-                    permutations.Add(permutation);
+                    permutations.Add(new List<string>(permutation));
                 }
             }
 
@@ -1552,30 +1607,23 @@ internal class Maintainance
             // number of ( must equal number of )
             //a ) cannot be placed before any (
             //a ( cannot be placed after any )
-            List<string> expressionList = new List<string>();
-            foreach (string number in permutation)
-            {
-                expressionList.Add(",");
-                expressionList.Add(number.ToString());
-
-            }
-            expressionList.Add(",");
+            List<string> expressionList = new List<string>(permutation);
 
             switch (permutation.Count)
             {
-                case 6:
-                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength6(expressionList));
+                case 11:
+                    expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength6Rewrite(expressionList));
                     break;
-                case 5:
+                case 9:
                     expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength5(expressionList));
                     break;
-                case 4:
+                case 7:
                     expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength4(expressionList));
                     break;
-                case 3:
+                case 5:
                     expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength3(expressionList));
                     break;
-                case 2:
+                case 3:
                     expressionLists.UnionWith(SolverHelpers.OperatorPermutationsLength2(expressionList));
                     break;
                 default:
@@ -1620,3 +1668,9 @@ internal class Maintainance
         return words9LettersOrLess;
     }
 }
+
+
+
+
+
+
