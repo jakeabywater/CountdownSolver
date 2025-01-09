@@ -365,3 +365,4 @@ FodyWeavers.xsd
 # File to store some test code
 .static string RemoveUnnecessaryBrac.txt/
 /static string RemoveUnnecessaryBrac.txt
+/Manual Bracket Permutations.txt
