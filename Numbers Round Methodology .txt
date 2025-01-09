@@ -1,0 +1,38 @@
+-----------------------------------------------------------------------------------------------------
+Presolver (maintenance):
+
+Generates number placeholder permutations.✓
+
+	Stores this in a list of lists called permutations
+
+
+Generates permutations of operators✓
+
+	Stores this in a list of lists called expressionListsBeforeBracketing
+
+
+Generates permutations of brackets✗
+
+	Doesn't account for cases such as (a+(b*c))/d
+
+	Stores these in a hashset of lists to ensure no repeatability called expressionListsAfterBracketing (however this may not be needed if the method below returns a bool that can be used in an if statement that prevents it being added).
+
+	Needs a method writing to check that brackets aren't used unnecessarily with operators that are commutable and that brackets aren't used unnecessarily.
+
+Writes all this to a text file✓
+
+
+-----------------------------------------------------------------------------------------------------
+
+Solver
+
+Access the text file of all the permutations.
+
+Loop through each line, and parse in the numbers to the different letters.
+ When doing each line, run a custom method to evaluate expression
+Find the furthest bracket ( and find the first ) after it.
+Get this expression and apply DMAS to it, by finding / and values either side, and then running custom method.
+Repeat for other operators
+Once set of brackets done, parse in the result of this pair of brackets
+Repeat until there are no more brackets, then apply DMAS to the resulting expression.
+Evaluate closeness to target and store.	
