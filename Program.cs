@@ -1,32 +1,26 @@
 ﻿using NCalc;
 using NumbersRound;
 using WordRound;
+using NewNumbersRound;
 
 internal class Program
 {
     private static void Main(string[] args)
     {
-        Console.WriteLine("Do you want to test or run? Enter T to test, R to run.");
-        string testing = Console.ReadLine();
-        switch (testing.ToUpper())
-        {
-            case "R":
-                MainMaster();
-                break;
-
-            case "T":
-                MainTesting();
-                break;
-        }
+        RunSolver();
     }
     private static void MainMaster()
     {
         Console.Clear();
-        RunSolver();
+        
     }
     private static void MainTesting()
     {
+        Console.WriteLine("Welcome to the secret testing mode!");
         List<string> testList = new List<string> { "a", ",", "b", ",", "c", ",", "d", ",", "e", ",", "f" };
+        Maintanance.NumbersRoundFileGenerator();
+        Maintanance.Test2();
+        
         NumbersMaintainance.NumberPermutationFileGenerator();
         WordsMaintainance.TextFileGenerator();
     }
@@ -50,19 +44,23 @@ internal class Program
             while (!gameChosen)
             {
                 string gameType = Console.ReadLine().ToUpper();
-                if (gameType == "W")
+                switch (gameType)
                 {
-                    gameChosen = true;
-                    WordRoundSolver.WordRoundSolverMain();
-                }
-                else if (gameType == "N")
-                {
-                    gameChosen = true;
-                    NumberRoundSolver.NumberRoundSolverMain();
-                }
-                else
-                {
-                    Console.WriteLine("Invalid input, please enter W for the Words Round, or N for the Numbers Round.");
+                    case "W":
+                        gameChosen = true;
+                        WordRoundSolver.WordRoundSolverMain();
+                        break;
+                    case "N":
+                        gameChosen = true;
+                        NumberRoundSolver.NumberRoundSolverMain();
+                        break;
+                    case "T":
+                        gameChosen = true;
+                        MainTesting();
+                        break;
+                    default:
+                        Console.WriteLine("Invalid input, please enter W for the Words Round, or N for the Numbers Round.");
+                        break;
                 }
             }
 
@@ -1722,17 +1720,3 @@ namespace NumbersRound
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

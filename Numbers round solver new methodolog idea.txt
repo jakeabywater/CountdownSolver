@@ -1,0 +1,7 @@
+Numbers round solver new methodology idea
+take 2 numbers then do an operation to them, then perform an other operation to the result and another number, repeat.
+This removes the need for brackets as you can just change the ordering of the operations occurring.
+
+Permutate starting operands and then for each operatoion that is not [word for order dependent], iterate for each order
+
+Requires complete logical rewrite (AGAIN).
