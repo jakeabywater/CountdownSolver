@@ -17,12 +17,6 @@ internal class Program
     private static void MainTesting()
     {
         Console.WriteLine("Welcome to the secret testing mode!");
-        List<string> testList = new List<string> { "a", ",", "b", ",", "c", ",", "d", ",", "e", ",", "f" };
-        Maintanance.NumbersRoundFileGenerator();
-        Maintanance.Test2();
-        
-        NumbersMaintainance.NumberPermutationFileGenerator();
-        WordsMaintainance.TextFileGenerator();
     }
 
     private static void RunSolver()
